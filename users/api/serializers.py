@@ -66,3 +66,13 @@ class LoginSerializer(serializers.ModelSerializer):
             'email': user.email,
             'tokens': user.tokens
         }
+
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('old_password', 'new_password', 'confirm_new_password')
