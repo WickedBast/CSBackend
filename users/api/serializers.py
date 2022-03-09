@@ -5,6 +5,8 @@ from users.models import User
 from django.contrib import auth
 
 
+# TODO: FORGOT PASSWORD
+
 class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 

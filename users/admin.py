@@ -6,14 +6,29 @@ from django.contrib.auth.admin import UserAdmin
 class UsersAdmin(UserAdmin):
     list_display = (
         'email', 'first_name', 'last_name', 'date_joined',
-        'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser')
+        'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
+    )
+    list_filter = (
+        'email', 'first_name', 'last_name', 'date_joined',
+        'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
+    )
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Permissions', {'fields': ('is_admin', 'is_active')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'email', 'first_name', 'last_name', 'type', 'password1', 'password2',
+                'is_admin', 'is_active', 'community', 'member', 'partner'
+            )
+        }),
+    )
     search_fields = ('email',)
     readonly_fields = ('date_joined', 'last_login')
     ordering = ('email',)
-
     filter_horizontal = ()
-    list_filter = ()
-    fieldsets = ()
 
 
 admin.site.register(User, UsersAdmin)
