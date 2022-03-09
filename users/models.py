@@ -45,7 +45,7 @@ class User(AbstractBaseUser):
         PARTNER = "PARTNER", "Partner"
 
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
 
     email = models.EmailField(max_length=50, unique=True, verbose_name='email', primary_key=True)

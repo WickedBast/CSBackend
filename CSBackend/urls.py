@@ -6,22 +6,22 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from rest_framework_simplejwt.views import (
-   TokenObtainPairView,
-   TokenRefreshView,
-   TokenVerifyView
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
 )
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Clean Stock API",
-      default_version='v1',
-      description="Clean Stock",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@vivadrive.io"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Clean Stock API",
+        default_version='v1',
+        description="Clean Stock",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@vivadrive.io"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
@@ -32,6 +32,9 @@ urlpatterns = [
 
     # REST FRAMEWORK
     path('api-auth/', include('rest_framework.urls')),
+
+    # OAUTH2
+    # path('oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
 
     # JWT TOKEN
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
