@@ -8,6 +8,21 @@ from django.contrib import auth
 # TODO: FORGOT PASSWORD
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['email', 'type']
+
+    def save(self):
+        account = User(
+            email=self.validated_data['email'],
+            type=self.validated_data['type']
+        )
+
+        account.save()
+        return account
+
+
+class RegistrationPasswordSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:

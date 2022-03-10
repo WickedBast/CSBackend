@@ -5,23 +5,22 @@ from django.contrib.auth.admin import UserAdmin
 
 class UsersAdmin(UserAdmin):
     list_display = (
-        'email', 'first_name', 'last_name', 'date_joined',
-        'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
+        'email', 'date_joined','last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
     )
     list_filter = (
-        'email', 'first_name', 'last_name', 'date_joined',
-        'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
+        'email', 'date_joined', 'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
     )
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': (
+            'email', 'password', 'type', 'community', 'member', 'partner'
+        )}),
         ('Permissions', {'fields': ('is_admin', 'is_active')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': (
-                'email', 'first_name', 'last_name', 'type', 'password1', 'password2',
-                'is_admin', 'is_active', 'community', 'member', 'partner'
+                'email', 'type', 'password1', 'password2', 'is_admin', 'is_active', 'community', 'member', 'partner'
             )
         }),
     )
