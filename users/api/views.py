@@ -42,7 +42,7 @@ def registration_view(request):
             data['response'] = "Successfully registered a new user."
             data['email'] = account.email
             data['pk'] = account.pk
-            data['type'] = account.type
+            data['types'] = account.types
             token = Token.objects.get(user=account).key
             data['token'] = token
 
