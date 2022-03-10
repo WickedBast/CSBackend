@@ -13,24 +13,24 @@ from rest_framework.authtoken.models import Token
 
 
 class AdministratorUser(BaseUserManager):
-    def create_user(self, email, type, password=None):
+    def create_user(self, email, types, password=None):
         if not email:
             raise ValueError("Users must have an email address")
 
         user = self.model(
             email=self.normalize_email(email),
-            type=type
+            types=types
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, type, password):
+    def create_superuser(self, email, types, password):
         user = self.create_user(
             email=self.normalize_email(email),
             password=password,
-            type=type
+            types=types
         )
 
         user.is_admin = True
@@ -44,9 +44,9 @@ class AdministratorUser(BaseUserManager):
 
 class User(AbstractBaseUser):
     class Types(models.TextChoices):
-        INDIVIDUAL = "INDIVIDUAL", "Individual"
-        ORGANIZATION = "ORGANIZATION", "Organization"
-        PARTNER = "PARTNER", "Partner"
+        INDIVIDUAL = "Individual", "INDIVIDUAL"
+        ORGANIZATION = "Organization", "ORGANIZATION"
+        PARTNER = "Partner", "PARTNER"
 
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, blank=True, null=True)
@@ -54,7 +54,7 @@ class User(AbstractBaseUser):
 
     email = models.EmailField(max_length=50, unique=True, verbose_name='email', primary_key=True)
     password = models.CharField(max_length=20, verbose_name='password', blank=True, null=True)
-    type = models.CharField(_('Types'), max_length=20, choices=Types.choices)
+    types = models.CharField(_('Types'), max_length=20, choices=Types.choices)
 
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
@@ -64,7 +64,7 @@ class User(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['type']
+    REQUIRED_FIELDS = ['types']
 
     objects = AdministratorUser()
 

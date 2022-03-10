@@ -11,12 +11,12 @@ from django.contrib import auth
 class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['email', 'type']
+        fields = ['email', 'types']
 
     def save(self):
         account = User(
             email=self.validated_data['email'],
-            type=self.validated_data['type']
+            types=self.validated_data['types']
         )
 
         account.save()

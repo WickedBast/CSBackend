@@ -12,7 +12,7 @@ class UsersAdmin(UserAdmin):
     )
     fieldsets = (
         (None, {'fields': (
-            'email', 'password', 'type', 'community', 'member', 'partner'
+            'email', 'password', 'types', 'community', 'member', 'partner'
         )}),
         ('Permissions', {'fields': ('is_admin', 'is_active')}),
     )
@@ -20,7 +20,7 @@ class UsersAdmin(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': (
-                'email', 'type', 'password1', 'password2', 'is_admin', 'is_active', 'community', 'member', 'partner'
+                'email', 'types', 'password1', 'password2', 'is_admin', 'is_active', 'community', 'member', 'partner'
             )
         }),
     )
