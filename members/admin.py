@@ -4,10 +4,10 @@ from django.contrib.auth.admin import GroupAdmin
 
 
 class MemberAdmin(GroupAdmin):
-    list_display = ('organization_name', 'first_name', 'last_name', 'type', 'nip_number')
-    search_fields = ('organization_name',)
+    list_display = ('type', 'first_name', 'last_name','organization_name', 'nip_number')
+    search_fields = ('organization_name', 'first_name', 'nip_number')
     readonly_fields = ()
-    ordering = ('organization_name',)
+    ordering = ('type',)
 
     filter_horizontal = ()
     list_filter = ()

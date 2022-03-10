@@ -2,10 +2,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 
 from users.models import User
+from members.models import Member
+from community.models import Community
+from partner.models import Partner
 from django.contrib import auth
 
-
-# TODO: FORGOT PASSWORD
 
 class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,6 +21,55 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         account.save()
         return account
+
+
+class MemberCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = ['type', 'phone_number', 'energy_tariff', 'pv_technology',
+                  'pv_power_peak_installed', 'system_loss', 'mounting_position',
+                  'slope', 'azimuth']
+
+    def save(self):
+        member = Member(
+            first_name=self.validated_data['first_name'],
+            last_name=self.validated_data['last_name'],
+            organization_name=self.validated_data['organization_name'],
+            nip_number=self.validated_data['nip_number'],
+            type="PROSPECT",
+            phone_number=self.validated_data['phone_number'],
+            energy_tariff=self.validated_data['energy_tariff'],
+            pv_technology=self.validated_data['pv_technology'],
+            pv_power_peak_installed=self.validated_data['pv_power_peak_installed'],
+            system_loss=self.validated_data['system_loss'],
+            mounting_position=self.validated_data['mounting_position'],
+            slope=self.validated_data['slope'],
+            azimuth=self.validated_data['azimuth']
+        )
+        member.save()
+        return member
+
+
+class CommunityCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Community
+        fields = ['type', 'community_name', 'zip_code', 'phone_number']
+
+    def save(self):
+        community = Community(
+            type=self.validated_data['type'],
+            community_name=self.validated_data['community_name'],
+            zip_code=self.validated_data['zip_code'],
+            phone_number=self.validated_data['phone_number']
+        )
+        community.save()
+        return community
+
+
+class PartnerCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Partner
+        fields = ['']
 
 
 class RegistrationPasswordSerializer(serializers.ModelSerializer):

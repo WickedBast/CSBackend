@@ -9,7 +9,7 @@ class Member(models.Model):
         PROSUMENT = "PROSUMENT", "Prosument"
         BENEFICIARY = "BENEFICIARY", "Beneficiary"
 
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
 
     type = models.CharField(max_length=20, choices=Types.choices)
     first_name = models.CharField(max_length=30, verbose_name="first name", blank=True, null=True)
@@ -30,4 +30,4 @@ class Member(models.Model):
         ordering = ["-id"]
 
     def __str__(self):
-        return self.first_name
+        return self.first_name or self.organization_name
