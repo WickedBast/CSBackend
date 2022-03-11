@@ -53,7 +53,6 @@ def registration_view(request):
 
             if str(account.types) == "Individual" or "Organization":
                 member_serializer = MemberCreationSerializer(data=request.data)
-                data['sey'] = request.data
                 if member_serializer.is_valid():
                     member = member_serializer.save()
                     data['is_member'] = member.__str__()
@@ -69,6 +68,21 @@ def registration_view(request):
         return Response(data)
 
 
+@api_view(['GET', ])
+@permission_classes([])
+@authentication_classes([])
+def does_account_exist_view(request):
+    if request.method == 'GET':
+        email = request.GET['email'].lower()
+        data = {}
+        try:
+            account = User.objects.get(email=email)
+            data['response'] = email
+        except User.DoesNotExist:
+            data['response'] = "Account does not exist"
+        return Response(data)
+
+
 def validate_email(email):
     account = None
     try:
@@ -77,6 +91,12 @@ def validate_email(email):
         return None
     if account is not None:
         return email
+
+
+def remember_me_cookies(request):
+    if request.method == 'GET':
+        if 'email' in request.COOKIES:
+            current_email = request.COOKIES['email']
 
 
 class ObtainAuthTokenView(APIView):
@@ -139,21 +159,6 @@ class LoginAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET', ])
-@permission_classes([])
-@authentication_classes([])
-def does_account_exist_view(request):
-    if request.method == 'GET':
-        email = request.GET['email'].lower()
-        data = {}
-        try:
-            account = User.objects.get(email=email)
-            data['response'] = email
-        except User.DoesNotExist:
-            data['response'] = "Account does not exist"
-        return Response(data)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
