@@ -45,7 +45,7 @@ class AdministratorUser(BaseUserManager):
 class User(AbstractBaseUser):
     class Types(models.TextChoices):
         INDIVIDUAL = "Individual", "INDIVIDUAL"
-        ORGANIZATION = "Organization", "ORGANIZATION"
+        ORGANIZATION = "Company", "COMPANY"
         PARTNER = "Partner", "PARTNER"
 
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)

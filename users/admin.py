@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 
 class UsersAdmin(UserAdmin):
     list_display = (
-        'email', 'date_joined','last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
+        'email', 'date_joined', 'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
     )
     list_filter = (
         'email', 'date_joined', 'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'

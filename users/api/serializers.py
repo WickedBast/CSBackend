@@ -69,7 +69,18 @@ class CommunityCreationSerializer(serializers.ModelSerializer):
 class PartnerCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
-        fields = ['']
+        fields = ['type', 'partner_type', 'partner_name', 'phone_number', 'nip_number']
+
+    def save(self):
+        partner = Partner(
+            type="CleanStock",
+            partner_type=self.validated_data['partner_type'],
+            partner_name=self.validated_data['partner_name'],
+            phone_number=self.validated_data['phone_number'],
+            nip_number=self.validated_data['nip_number']
+        )
+        partner.save()
+        return partner
 
 
 class RegistrationPasswordSerializer(serializers.ModelSerializer):

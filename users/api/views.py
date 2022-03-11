@@ -12,6 +12,9 @@ from users.api.serializers import (
     EmailVerificationSerializer,
     LoginSerializer,
     ChangePasswordSerializer,
+    MemberCreationSerializer,
+    CommunityCreationSerializer,
+    PartnerCreationSerializer
 )
 
 import jwt
@@ -45,6 +48,20 @@ def registration_view(request):
             data['types'] = account.types
             token = Token.objects.get(user=account).key
             data['token'] = token
+            data['member'] = account.member
+            data['partner'] = account.partner
+
+            if str(account.types) == "Individual" or "Organization":
+                member_serializer = MemberCreationSerializer(data=request.data)
+                data['sey'] = request.data
+                if member_serializer.is_valid():
+                    member = member_serializer.save()
+                    data['is_member'] = member.__str__()
+            else:
+                partner_serializer = PartnerCreationSerializer(data=request.data)
+                if partner_serializer.is_valid():
+                    partner = partner_serializer.save()
+                    data['is_partner'] = partner.__str__()
 
         else:
             data = serializer.errors
