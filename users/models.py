@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -10,6 +12,12 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail
+
+load_dotenv()
 
 
 class AdministratorUser(BaseUserManager):
@@ -52,7 +60,7 @@ class User(AbstractBaseUser):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, blank=True, null=True)
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
 
-    email = models.EmailField(max_length=50, unique=True, verbose_name='email', primary_key=True)
+    email = models.EmailField(max_length=50, unique=True, verbose_name='email')
     password = models.CharField(max_length=20, verbose_name='password', blank=True, null=True)
     types = models.CharField(_('Types'), max_length=20, choices=Types.choices)
 
@@ -82,3 +90,20 @@ class User(AbstractBaseUser):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'),
+                                                   reset_password_token.key)
+
+    send_mail(
+        # title:
+        "Password Reset for {title}".format(title="CleanStock Account"),
+        # message:
+        email_plaintext_message,
+        # from:
+        os.getenv("DEFAULT_FROM_EMAIL"),
+        # to:
+        [reset_password_token.user.email]
+    )

@@ -29,6 +29,7 @@ urlpatterns = [
 
     # USER API
     path('api/user/', include('users.api.urls')),
+    path('api/user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
     # REST FRAMEWORK
     path('api-auth/', include('rest_framework.urls')),

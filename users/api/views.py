@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
-from rest_framework.generics import UpdateAPIView
+
 from users.api.serializers import (
     RegistrationSerializer,
     EmailVerificationSerializer,
@@ -156,7 +156,7 @@ def does_account_exist_view(request):
         return Response(data)
 
 
-class ChangePasswordView(UpdateAPIView):
+class ChangePasswordView(generics.UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     model = User
     permission_classes = (IsAuthenticated,)
