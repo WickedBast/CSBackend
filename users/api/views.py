@@ -5,14 +5,14 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.views import APIView
 
 from users.api.serializers import (
     RegistrationSerializer,
     EmailVerificationSerializer,
     LoginSerializer,
     ChangePasswordSerializer,
-    MemberCreationSerializer,
+    IndividualMemberCreationSerializer,
+    CompanyMemberCreationSerializer,
     CommunityCreationSerializer,
     PartnerCreationSerializer
 )
@@ -48,19 +48,22 @@ def registration_view(request):
             data['types'] = account.types
             token = Token.objects.get(user=account).key
             data['token'] = token
-            data['member'] = account.member
-            data['partner'] = account.partner
 
-            if str(account.types) == "Individual" or "Organization":
-                member_serializer = MemberCreationSerializer(data=request.data)
+            if str(account.types) == "Individual":
+                member_serializer = IndividualMemberCreationSerializer(data=request.data)
                 if member_serializer.is_valid():
                     member = member_serializer.save()
-                    data['is_member'] = member.__str__()
+                    data['member'] = member.__str__()
+            elif str(account.types) == "Company":
+                member_serializer = CompanyMemberCreationSerializer(data=request.data)
+                if member_serializer.is_valid():
+                    member = member_serializer.save()
+                    data['member'] = member.__str__()
             else:
                 partner_serializer = PartnerCreationSerializer(data=request.data)
                 if partner_serializer.is_valid():
                     partner = partner_serializer.save()
-                    data['is_partner'] = partner.__str__()
+                    data['partner'] = partner.__str__()
 
         else:
             data = serializer.errors
@@ -99,7 +102,7 @@ def remember_me_cookies(request):
             current_email = request.COOKIES['email']
 
 
-class ObtainAuthTokenView(APIView):
+class ObtainAuthTokenView(views.APIView):
     authentication_classes = []
     permission_classes = []
 

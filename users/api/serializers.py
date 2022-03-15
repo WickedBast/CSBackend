@@ -23,20 +23,43 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return account
 
 
-class MemberCreationSerializer(serializers.ModelSerializer):
+class IndividualMemberCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
-        fields = ['type', 'phone_number', 'energy_tariff', 'pv_technology',
-                  'pv_power_peak_installed', 'system_loss', 'mounting_position',
-                  'slope', 'azimuth']
+        fields = ['first_name', 'last_name', 'type', 'phone_number', 'energy_tariff',
+                  'pv_technology', 'pv_power_peak_installed',
+                  'system_loss', 'mounting_position', 'slope', 'azimuth']
 
     def save(self):
         member = Member(
             first_name=self.validated_data['first_name'],
             last_name=self.validated_data['last_name'],
+            type=self.validated_data['type'],
+            phone_number=self.validated_data['phone_number'],
+            energy_tariff=self.validated_data['energy_tariff'],
+            pv_technology=self.validated_data['pv_technology'],
+            pv_power_peak_installed=self.validated_data['pv_power_peak_installed'],
+            system_loss=self.validated_data['system_loss'],
+            mounting_position=self.validated_data['mounting_position'],
+            slope=self.validated_data['slope'],
+            azimuth=self.validated_data['azimuth']
+        )
+        member.save()
+        return member
+
+
+class CompanyMemberCreationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = ['organization_name', 'nip_number', 'type', 'phone_number', 'energy_tariff',
+                  'pv_technology', 'pv_power_peak_installed',
+                  'system_loss', 'mounting_position', 'slope', 'azimuth']
+
+    def save(self):
+        member = Member(
             organization_name=self.validated_data['organization_name'],
             nip_number=self.validated_data['nip_number'],
-            type="PROSPECT",
+            type=self.validated_data['type'],
             phone_number=self.validated_data['phone_number'],
             energy_tariff=self.validated_data['energy_tariff'],
             pv_technology=self.validated_data['pv_technology'],
@@ -69,15 +92,16 @@ class CommunityCreationSerializer(serializers.ModelSerializer):
 class PartnerCreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
-        fields = ['type', 'partner_type', 'partner_name', 'phone_number', 'nip_number']
+        fields = ['type', 'partner_type', 'partner_name', 'phone_number', 'nip_number', 'zip_code']
 
     def save(self):
         partner = Partner(
-            type="CleanStock",
+            type=self.validated_data['type'],
             partner_type=self.validated_data['partner_type'],
             partner_name=self.validated_data['partner_name'],
             phone_number=self.validated_data['phone_number'],
-            nip_number=self.validated_data['nip_number']
+            nip_number=self.validated_data['nip_number'],
+            zip_code=self.validated_data['zip_code']
         )
         partner.save()
         return partner

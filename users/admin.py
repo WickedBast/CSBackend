@@ -11,18 +11,14 @@ class UsersAdmin(UserAdmin):
         'email', 'date_joined', 'last_login', 'is_active', 'is_admin', 'is_staff', 'is_superuser'
     )
     fieldsets = (
-        (None, {'fields': (
-            'email', 'password', 'types', 'community', 'member', 'partner'
-        )}),
+        (None, {'fields': ('types',)}),
+        ('Credentials', {'fields': ('email', 'password')}),
         ('Permissions', {'fields': ('is_admin', 'is_active')}),
     )
     add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': (
-                'email', 'types', 'password1', 'password2', 'is_admin', 'is_active', 'community', 'member', 'partner'
-            )
-        }),
+        (None, {'fields': ('types',)}),
+        ('Credentials', {'fields': ('email', 'password1', 'password2')}),
+        ('Permissions', {'fields': ('is_admin', 'is_active')}),
     )
     search_fields = ('email',)
     readonly_fields = ('date_joined', 'last_login')

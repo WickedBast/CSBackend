@@ -61,7 +61,7 @@ class User(AbstractBaseUser):
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
 
     email = models.EmailField(max_length=50, unique=True, verbose_name='email')
-    password = models.CharField(max_length=20, verbose_name='password', blank=True, null=True)
+    password = models.CharField(max_length=128, verbose_name='password', blank=True, null=True)
     types = models.CharField(_('Types'), max_length=20, choices=Types.choices)
 
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)

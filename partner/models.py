@@ -20,6 +20,7 @@ class Partner(models.Model):
     partner_name = models.CharField(max_length=30, verbose_name="partner name")
     phone_number = models.CharField(max_length=20, verbose_name="phone number")
     nip_number = models.CharField(max_length=20, verbose_name="nip number", blank=True, null=True)
+    zip_code = models.CharField(max_length=20, verbose_name="zip code")
 
     class Meta:
         ordering = ["-id"]
