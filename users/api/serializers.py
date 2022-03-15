@@ -1,17 +1,43 @@
 from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from django.utils.translation import gettext as _
+from django.contrib.auth.password_validation import validate_password
+
+from members.api.serializers import (
+    IndividualMemberCreationSerializer,
+    CompanyMemberCreationSerializer,
+)
+from partner.api.serializers import (
+    PartnerCreationSerializer
+)
 
 from users.models import User
-from members.models import Member
-from community.models import Community
-from partner.models import Partner
 from django.contrib import auth
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', 'types']
+# REGISTRATION
+class RegistrationSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=50)
+    types = serializers.CharField(write_only=True)
+
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            types=validated_data['types'],
+        )
+        try:
+            if self.validate_email(self.email) is not None:
+                user.save()
+                if user.types == "Individual":
+                    user.member = self.save_type(validated_data)
+                elif user.types == "Company":
+                    user.member = self.save_type(validated_data)
+                elif user.types == "Partner":
+                    user.partner = self.save_type(validated_data)
+        except:
+            raise ValidationError({"email": [_("User already exists")]})
+
+        return user
 
     def save(self):
         account = User(
@@ -22,100 +48,40 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
         return account
 
+    def validate_email(self, email):
+        account = None
+        try:
+            account = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return None
+        if account is not None:
+            return email
 
-class IndividualMemberCreationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Member
-        fields = ['first_name', 'last_name', 'type', 'phone_number', 'energy_tariff',
-                  'pv_technology', 'pv_power_peak_installed',
-                  'system_loss', 'mounting_position', 'slope', 'azimuth']
-
-    def save(self):
-        member = Member(
-            first_name=self.validated_data['first_name'],
-            last_name=self.validated_data['last_name'],
-            type=self.validated_data['type'],
-            phone_number=self.validated_data['phone_number'],
-            energy_tariff=self.validated_data['energy_tariff'],
-            pv_technology=self.validated_data['pv_technology'],
-            pv_power_peak_installed=self.validated_data['pv_power_peak_installed'],
-            system_loss=self.validated_data['system_loss'],
-            mounting_position=self.validated_data['mounting_position'],
-            slope=self.validated_data['slope'],
-            azimuth=self.validated_data['azimuth']
-        )
-        member.save()
-        return member
-
-
-class CompanyMemberCreationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Member
-        fields = ['organization_name', 'nip_number', 'type', 'phone_number', 'energy_tariff',
-                  'pv_technology', 'pv_power_peak_installed',
-                  'system_loss', 'mounting_position', 'slope', 'azimuth']
-
-    def save(self):
-        member = Member(
-            organization_name=self.validated_data['organization_name'],
-            nip_number=self.validated_data['nip_number'],
-            type=self.validated_data['type'],
-            phone_number=self.validated_data['phone_number'],
-            energy_tariff=self.validated_data['energy_tariff'],
-            pv_technology=self.validated_data['pv_technology'],
-            pv_power_peak_installed=self.validated_data['pv_power_peak_installed'],
-            system_loss=self.validated_data['system_loss'],
-            mounting_position=self.validated_data['mounting_position'],
-            slope=self.validated_data['slope'],
-            azimuth=self.validated_data['azimuth']
-        )
-        member.save()
-        return member
+    def save_type(self, validated_data):
+        if validated_data['types'] == "Individual":
+            member_serializer = IndividualMemberCreationSerializer(data=validated_data)
+            if member_serializer.is_valid():
+                member = member_serializer.create(validated_data)
+                return member
+        elif validated_data['types'] == "Company":
+            member_serializer = CompanyMemberCreationSerializer(data=validated_data)
+            if member_serializer.is_valid():
+                member = member_serializer.create(validated_data)
+                return member
+        elif validated_data['types'] == "Partner":
+            partner_serializer = PartnerCreationSerializer(data=validated_data)
+            if partner_serializer.is_valid():
+                partner = partner_serializer.create(validated_data)
+                return partner
 
 
-class CommunityCreationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Community
-        fields = ['type', 'community_name', 'zip_code', 'phone_number']
-
-    def save(self):
-        community = Community(
-            type=self.validated_data['type'],
-            community_name=self.validated_data['community_name'],
-            zip_code=self.validated_data['zip_code'],
-            phone_number=self.validated_data['phone_number']
-        )
-        community.save()
-        return community
-
-
-class PartnerCreationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Partner
-        fields = ['type', 'partner_type', 'partner_name', 'phone_number', 'nip_number', 'zip_code']
-
-    def save(self):
-        partner = Partner(
-            type=self.validated_data['type'],
-            partner_type=self.validated_data['partner_type'],
-            partner_name=self.validated_data['partner_name'],
-            phone_number=self.validated_data['phone_number'],
-            nip_number=self.validated_data['nip_number'],
-            zip_code=self.validated_data['zip_code']
-        )
-        partner.save()
-        return partner
-
-
-class RegistrationPasswordSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['email', 'password', 'password2']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+class RegistrationPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True, validators=[validate_password], max_length=128, min_length=6
+    )
+    password2 = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True, validators=[validate_password], max_length=128, min_length=6
+    )
 
     def save(self):
         account = User(
@@ -133,22 +99,11 @@ class RegistrationPasswordSerializer(serializers.ModelSerializer):
         return account
 
 
-class EmailVerificationSerializer(serializers.ModelSerializer):
-    token = serializers.CharField(max_length=555)
-
-    class Meta:
-        model = User
-        fields = ['token']
-
-
-class LoginSerializer(serializers.ModelSerializer):
+# LOGIN
+class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255, min_length=3)
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
     tokens = serializers.CharField(max_length=300, min_length=6, read_only=True)
-
-    class Meta:
-        model = User
-        fields = ['email', 'password', 'tokens']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -168,6 +123,16 @@ class LoginSerializer(serializers.ModelSerializer):
         }
 
 
+# EMAIL VERIFICATION
+class EmailVerificationSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=555)
+
+    class Meta:
+        model = User
+        fields = ['token']
+
+
+# CHANGE PASSWORD
 class ChangePasswordSerializer(serializers.ModelSerializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)

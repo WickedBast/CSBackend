@@ -27,8 +27,13 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # USER API
+    # LOCAL API
     path('api/user/', include('users.api.urls')),
+    path('api/member/', include('members.api.urls')),
+    path('api/community/', include('community.api.urls')),
+    path('api/partner/', include('partner.api.urls')),
+
+    # PASSWORD RESET
     path('api/user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
     # REST FRAMEWORK

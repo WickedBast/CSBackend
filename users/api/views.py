@@ -1,22 +1,3 @@
-from django.contrib.auth import authenticate
-from rest_framework import status, generics, views
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-
-from users.api.serializers import (
-    RegistrationSerializer,
-    EmailVerificationSerializer,
-    LoginSerializer,
-    ChangePasswordSerializer,
-    IndividualMemberCreationSerializer,
-    CompanyMemberCreationSerializer,
-    CommunityCreationSerializer,
-    PartnerCreationSerializer
-)
-
 import jwt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -24,85 +5,52 @@ from drf_yasg import openapi
 from django.conf import settings
 from users.models import User
 
+from django.contrib.auth import authenticate
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
-@api_view(['POST', ])
-@permission_classes([])
-@authentication_classes([])
-def registration_view(request):
-    if request.method == 'POST':
-        data = {}
-
-        email = request.data.get('email', '0').lower()
-        if validate_email(email) is not None:
-            data['error_message'] = 'That email is already in use.'
-            data['response'] = 'Error'
-            return Response(data)
-
-        serializer = RegistrationSerializer(data=request.data)
-
-        if serializer.is_valid():
-            account = serializer.save()
-            data['response'] = "Successfully registered a new user."
-            data['email'] = account.email
-            data['pk'] = account.pk
-            data['types'] = account.types
-            token = Token.objects.get(user=account).key
-            data['token'] = token
-
-            if str(account.types) == "Individual":
-                member_serializer = IndividualMemberCreationSerializer(data=request.data)
-                if member_serializer.is_valid():
-                    member = member_serializer.save()
-                    data['member'] = member.__str__()
-            elif str(account.types) == "Company":
-                member_serializer = CompanyMemberCreationSerializer(data=request.data)
-                if member_serializer.is_valid():
-                    member = member_serializer.save()
-                    data['member'] = member.__str__()
-            else:
-                partner_serializer = PartnerCreationSerializer(data=request.data)
-                if partner_serializer.is_valid():
-                    partner = partner_serializer.save()
-                    data['partner'] = partner.__str__()
-
-        else:
-            data = serializer.errors
-
-        return Response(data)
+from rest_framework.views import APIView
+from rest_framework.generics import (
+    CreateAPIView,
+    GenericAPIView,
+    UpdateAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+    RetrieveUpdateDestroyAPIView
+)
+from users.api.serializers import (
+    RegistrationSerializer,
+    EmailVerificationSerializer,
+    LoginSerializer,
+    ChangePasswordSerializer,
+    RegistrationPasswordSerializer,
+)
 
 
-@api_view(['GET', ])
-@permission_classes([])
-@authentication_classes([])
-def does_account_exist_view(request):
-    if request.method == 'GET':
-        email = request.GET['email'].lower()
-        data = {}
-        try:
-            account = User.objects.get(email=email)
-            data['response'] = email
-        except User.DoesNotExist:
-            data['response'] = "Account does not exist"
-        return Response(data)
+class RegistrationView(CreateAPIView):
+    serializer_class = RegistrationSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            "response": "User Successfully Created"
+        })
 
 
-def validate_email(email):
-    account = None
-    try:
-        account = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return None
-    if account is not None:
-        return email
+class RegistrationPasswordView(UpdateAPIView):
+    serializer_class = RegistrationPasswordSerializer
+    permission_classes = []
+    authentication_classes = []
 
 
-def remember_me_cookies(request):
-    if request.method == 'GET':
-        if 'email' in request.COOKIES:
-            current_email = request.COOKIES['email']
-
-
-class ObtainAuthTokenView(views.APIView):
+class LoginView(APIView):
     authentication_classes = []
     permission_classes = []
 
@@ -128,7 +76,7 @@ class ObtainAuthTokenView(views.APIView):
         return Response(context)
 
 
-class VerifyEmail(views.APIView):
+class VerifyEmailView(APIView):
     serializer_class = EmailVerificationSerializer
 
     token_param_config = openapi.Parameter('token', in_=openapi.IN_QUERY, description='Description',
@@ -154,7 +102,7 @@ class VerifyEmail(views.APIView):
             return Response({'error': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LoginAPIView(generics.GenericAPIView):
+class LoginAPIView(GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
@@ -164,7 +112,7 @@ class LoginAPIView(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ChangePasswordView(generics.UpdateAPIView):
+class ChangePasswordView(UpdateAPIView):
     serializer_class = ChangePasswordSerializer
     model = User
     permission_classes = (IsAuthenticated,)
