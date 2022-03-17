@@ -22,31 +22,20 @@ class RegistrationSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = User(
-            email=validated_data['email'],
-            types=validated_data['types'],
+            email=validated_data["email"],
+            types=validated_data["types"],
         )
         try:
-            if self.validate_email(self.email) is not None:
+            if self.validate_email(validated_data["email"]) is not None:
                 user.save()
-                if user.types == "Individual":
-                    user.member = self.save_type(validated_data)
-                elif user.types == "Company":
-                    user.member = self.save_type(validated_data)
+                if user.types == "Individual" or "Company":
+                    user.member = self.save_type()
                 elif user.types == "Partner":
-                    user.partner = self.save_type(validated_data)
+                    user.partner = self.save_type()
         except:
             raise ValidationError({"email": [_("User already exists")]})
 
         return user
-
-    def save(self):
-        account = User(
-            email=self.validated_data['email'],
-            types=self.validated_data['types']
-        )
-
-        account.save()
-        return account
 
     def validate_email(self, email):
         account = None
@@ -57,21 +46,21 @@ class RegistrationSerializer(serializers.Serializer):
         if account is not None:
             return email
 
-    def save_type(self, validated_data):
-        if validated_data['types'] == "Individual":
-            member_serializer = IndividualMemberCreationSerializer(data=validated_data)
+    def save_type(self):
+        if self.validated_data["types"] == "Individual":
+            member_serializer = IndividualMemberCreationSerializer(data=self.validated_data)
             if member_serializer.is_valid():
-                member = member_serializer.create(validated_data)
+                member = member_serializer.create(self.validated_data)
                 return member
-        elif validated_data['types'] == "Company":
-            member_serializer = CompanyMemberCreationSerializer(data=validated_data)
+        elif self.validated_data["types"] == "Company":
+            member_serializer = CompanyMemberCreationSerializer(data=self.validated_data)
             if member_serializer.is_valid():
-                member = member_serializer.create(validated_data)
+                member = member_serializer.create(self.validated_data)
                 return member
-        elif validated_data['types'] == "Partner":
-            partner_serializer = PartnerCreationSerializer(data=validated_data)
+        elif self.validated_data["types"] == "Partner":
+            partner_serializer = PartnerCreationSerializer(data=self.validated_data)
             if partner_serializer.is_valid():
-                partner = partner_serializer.create(validated_data)
+                partner = partner_serializer.create(self.validated_data)
                 return partner
 
 

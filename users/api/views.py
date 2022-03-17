@@ -35,14 +35,6 @@ class RegistrationView(CreateAPIView):
     permission_classes = []
     authentication_classes = []
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({
-            "response": "User Successfully Created"
-        })
-
 
 class RegistrationPasswordView(UpdateAPIView):
     serializer_class = RegistrationPasswordSerializer
@@ -50,11 +42,12 @@ class RegistrationPasswordView(UpdateAPIView):
     authentication_classes = []
 
 
-class LoginView(APIView):
+class LoginView(CreateAPIView):
+    serializer_class = LoginSerializer
     authentication_classes = []
     permission_classes = []
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         context = {}
 
         email = request.POST.get('email')
@@ -69,11 +62,11 @@ class LoginView(APIView):
             context['pk'] = account.pk
             context['email'] = email.lower()
             context['token'] = token.key
+            return Response(context, status=status.HTTP_202_ACCEPTED)
         else:
             context['response'] = 'Error'
             context['error_message'] = 'Invalid credentials'
-
-        return Response(context)
+            return Response(context, status=status.HTTP_404_NOT_FOUND)
 
 
 class VerifyEmailView(APIView):
