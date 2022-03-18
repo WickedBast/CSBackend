@@ -17,6 +17,9 @@ from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail
 
+from oauth2_provider.models import AccessToken, RefreshToken
+from datetime import datetime, timedelta
+
 load_dotenv()
 
 
@@ -86,10 +89,14 @@ class User(AbstractBaseUser):
         return True
 
 
+'''
+
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
+def create_access_token(sender, instance=None, created=False, **kwargs):
     if created:
-        Token.objects.create(user=instance)
+        AccessToken.objects.create(expires=datetime.now() + timedelta(minutes=10), user=instance)
+        RefreshToken.objects.create(user=instance)
+'''
 
 
 @receiver(reset_password_token_created)

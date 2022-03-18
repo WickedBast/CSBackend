@@ -40,7 +40,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
 
     # OAUTH2
-    # path('oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
     # JWT TOKEN
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

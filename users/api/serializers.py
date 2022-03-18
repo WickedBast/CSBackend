@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from django.utils.translation import gettext as _
 from django.contrib.auth.password_validation import validate_password
+from django.core.validators import validate_email
 
 from members.api.serializers import (
     IndividualMemberCreationSerializer,
@@ -12,12 +13,14 @@ from partner.api.serializers import (
 )
 
 from users.models import User
+from members.models import Member
+from partner.models import Partner
 from django.contrib import auth
 
 
 # REGISTRATION
 class RegistrationSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=50)
+    email = serializers.EmailField(write_only=True, max_length=50)
     types = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
@@ -26,39 +29,37 @@ class RegistrationSerializer(serializers.Serializer):
             types=validated_data["types"],
         )
         try:
-            if self.validate_email(validated_data["email"]) is not None:
+            if self.validateEmail(validated_data["email"]):
+            #    if user.types == "Individual" or "Company":
+            #        user.member = Member.objects.create()
+            #    elif user.types == "Partner":
+            #        user.partner = Partner.objects.create()
                 user.save()
-                if user.types == "Individual" or "Company":
-                    user.member = self.save_type()
-                elif user.types == "Partner":
-                    user.partner = self.save_type()
         except:
             raise ValidationError({"email": [_("User already exists")]})
 
         return user
 
-    def validate_email(self, email):
-        account = None
+    def validateEmail(self, email):
         try:
-            account = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return None
-        if account is not None:
-            return email
+            validate_email(email)
+            return True
+        except ValidationError:
+            return False
 
     def save_type(self):
         if self.validated_data["types"] == "Individual":
-            member_serializer = IndividualMemberCreationSerializer(data=self.validated_data)
+            member_serializer = IndividualMemberCreationSerializer()
             if member_serializer.is_valid():
                 member = member_serializer.create(self.validated_data)
                 return member
         elif self.validated_data["types"] == "Company":
-            member_serializer = CompanyMemberCreationSerializer(data=self.validated_data)
+            member_serializer = CompanyMemberCreationSerializer()
             if member_serializer.is_valid():
                 member = member_serializer.create(self.validated_data)
                 return member
         elif self.validated_data["types"] == "Partner":
-            partner_serializer = PartnerCreationSerializer(data=self.validated_data)
+            partner_serializer = PartnerCreationSerializer()
             if partner_serializer.is_valid():
                 partner = partner_serializer.create(self.validated_data)
                 return partner
@@ -71,21 +72,6 @@ class RegistrationPasswordSerializer(serializers.Serializer):
     password2 = serializers.CharField(
         style={'input_type': 'password'}, write_only=True, validators=[validate_password], max_length=128, min_length=6
     )
-
-    def save(self):
-        account = User(
-            email=self.validated_data['email'],
-        )
-
-        password = self.validated_data['password']
-        password2 = self.validated_data['password2']
-
-        if password != password2:
-            raise serializers.ValidationError({'password': 'Passwords must match'})
-
-        account.set_password(password)
-        account.save()
-        return account
 
 
 # LOGIN
