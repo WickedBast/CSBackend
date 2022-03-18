@@ -2,15 +2,17 @@ import jwt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+import random
 from django.conf import settings
 from users.models import User
 
 from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from oauth2_provider.models import AccessToken, RefreshToken
+from datetime import datetime, timedelta
 
 from rest_framework.views import APIView
 from rest_framework.generics import (
@@ -39,6 +41,10 @@ class RegistrationView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
+            RefreshToken.objects.create(
+                user=user, token="".join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(16)),
+                revoked=datetime.now(), application_id=1,
+            )
             return Response({
                 "response": "User Successfully Created.",
                 "email": user.email,
@@ -94,13 +100,17 @@ class LoginView(CreateAPIView):
         account = authenticate(email=email, password=password)
         if account:
             try:
-                token = Token.objects.get(user=account)
-            except Token.DoesNotExist:
-                token = Token.objects.create(user=account)
+                token = AccessToken.objects.get(user=account)
+            except AccessToken.DoesNotExist:
+                token = AccessToken.objects.create(
+                    user=account, expires=datetime.now() + timedelta(minutes=10),
+                    token="".join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(16)),
+                    application_id=1,
+                )
             context['response'] = 'Successfully authenticated.'
             context['pk'] = account.pk
             context['email'] = email.lower()
-            context['token'] = token.key
+            context['token'] = token.token
             return Response(context, status=status.HTTP_202_ACCEPTED)
         else:
             context['response'] = 'Error'
