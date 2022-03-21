@@ -1,6 +1,6 @@
 from django.urls import path
 
-app_name = "community"
+app_name = "communities"
 
 urlpatterns = [
 

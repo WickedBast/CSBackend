@@ -39,9 +39,9 @@ INSTALLED_APPS = [
 
     # LOCAL
     'users',
-    'community',
+    'communities',
     'members',
-    'partner',
+    'partners',
 ]
 
 MIDDLEWARE = [

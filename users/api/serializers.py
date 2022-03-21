@@ -8,13 +8,13 @@ from members.api.serializers import (
     IndividualMemberCreationSerializer,
     CompanyMemberCreationSerializer,
 )
-from partner.api.serializers import (
+from partners.api.serializers import (
     PartnerCreationSerializer
 )
 
 from users.models import User
 from members.models import Member
-from partner.models import Partner
+from partners.models import Partner
 from django.contrib import auth
 
 
@@ -33,7 +33,7 @@ class RegistrationSerializer(serializers.Serializer):
             #    if user.types == "Individual" or "Company":
             #        user.member = Member.objects.create()
             #    elif user.types == "Partner":
-            #        user.partner = Partner.objects.create()
+            #        user.partners = Partner.objects.create()
                 user.save()
         except:
             raise ValidationError({"email": [_("User already exists")]})
@@ -72,30 +72,6 @@ class RegistrationPasswordSerializer(serializers.Serializer):
     password2 = serializers.CharField(
         style={'input_type': 'password'}, write_only=True, validators=[validate_password], max_length=128, min_length=6
     )
-
-
-# LOGIN
-class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=255, min_length=3)
-    password = serializers.CharField(max_length=68, min_length=6, write_only=True)
-    tokens = serializers.CharField(max_length=300, min_length=6, read_only=True)
-
-    def validate(self, attrs):
-        email = attrs.get('email', '')
-        password = attrs.get('password', '')
-
-        user = auth.authenticate(email=email, password=password)
-
-        if not user:
-            raise AuthenticationFailed('Invalid Credentials, try again')
-
-        if not user.is_active:
-            raise AuthenticationFailed('Account disabled, contact admin')
-
-        return {
-            'email': user.email,
-            'tokens': user.tokens
-        }
 
 
 # EMAIL VERIFICATION

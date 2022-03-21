@@ -1,26 +1,12 @@
-import os
-from dotenv import load_dotenv
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
-from community.models import Community
-from members.models import Member
-from partner.models import Partner
-
-from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from oauth2_provider.models import AccessToken, RefreshToken
 from rest_framework.authtoken.models import Token
 
-from django.urls import reverse
-from django_rest_passwordreset.signals import reset_password_token_created
-from django.core.mail import send_mail
-
-from oauth2_provider.models import AccessToken, RefreshToken
-from datetime import datetime, timedelta
-
-load_dotenv()
+from communities.models import Community
+from members.models import Member
+from partners.models import Partner
 
 
 class AdministratorUser(BaseUserManager):
@@ -87,30 +73,3 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
-
-
-'''
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_access_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        AccessToken.objects.create(expires=datetime.now() + timedelta(minutes=10), user=instance)
-        RefreshToken.objects.create(user=instance)
-'''
-
-
-@receiver(reset_password_token_created)
-def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
-    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'),
-                                                   reset_password_token.key)
-
-    send_mail(
-        # title:
-        "Password Reset for {title}".format(title="CleanStock Account"),
-        # message:
-        email_plaintext_message,
-        # from:
-        os.getenv("DEFAULT_FROM_EMAIL"),
-        # to:
-        [reset_password_token.user.email]
-    )

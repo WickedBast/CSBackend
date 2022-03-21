@@ -1,7 +1,7 @@
 from django.urls import path
-from partner.api import views
+from partners.api import views
 
-app_name = "partner"
+app_name = "partners"
 
 urlpatterns = [
     path('nip/<nip>/', views.FleetNip.as_view()),

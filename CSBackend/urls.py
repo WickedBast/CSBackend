@@ -30,8 +30,8 @@ urlpatterns = [
     # LOCAL API
     path('api/user/', include('users.api.urls')),
     path('api/member/', include('members.api.urls')),
-    path('api/community/', include('community.api.urls')),
-    path('api/partner/', include('partner.api.urls')),
+    path('api/communities/', include('communities.api.urls')),
+    path('api/partners/', include('partners.api.urls')),
 
     # PASSWORD RESET
     path('api/user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
@@ -40,7 +40,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
 
     # OAUTH2
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
     # JWT TOKEN
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

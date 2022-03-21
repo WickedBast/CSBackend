@@ -26,7 +26,6 @@ from rest_framework.generics import (
 from users.api.serializers import (
     RegistrationSerializer,
     EmailVerificationSerializer,
-    LoginSerializer,
     ChangePasswordSerializer,
     RegistrationPasswordSerializer,
 )
@@ -41,10 +40,6 @@ class RegistrationView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
-            RefreshToken.objects.create(
-                user=user, token="".join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(16)),
-                revoked=datetime.now(), application_id=1,
-            )
             return Response({
                 "response": "User Successfully Created.",
                 "email": user.email,
@@ -87,37 +82,6 @@ class RegistrationPasswordView(UpdateAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LoginView(CreateAPIView):
-    serializer_class = LoginSerializer
-    authentication_classes = []
-    permission_classes = []
-
-    def post(self, request, *args, **kwargs):
-        context = {}
-
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        account = authenticate(email=email, password=password)
-        if account:
-            try:
-                token = AccessToken.objects.get(user=account)
-            except AccessToken.DoesNotExist:
-                token = AccessToken.objects.create(
-                    user=account, expires=datetime.now() + timedelta(minutes=10),
-                    token="".join(random.choice('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(16)),
-                    application_id=1,
-                )
-            context['response'] = 'Successfully authenticated.'
-            context['pk'] = account.pk
-            context['email'] = email.lower()
-            context['token'] = token.token
-            return Response(context, status=status.HTTP_202_ACCEPTED)
-        else:
-            context['response'] = 'Error'
-            context['error_message'] = 'Invalid credentials'
-            return Response(context, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-
 class VerifyEmailView(APIView):
     serializer_class = EmailVerificationSerializer
 
@@ -142,16 +106,6 @@ class VerifyEmailView(APIView):
 
         except jwt.exceptions.DecodeError:
             return Response({'error': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LoginAPIView(GenericAPIView):
-    serializer_class = LoginSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ChangePasswordView(UpdateAPIView):
