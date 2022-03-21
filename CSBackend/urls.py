@@ -27,14 +27,20 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # USER API
-    path('', include('users.api.urls')),
+    # LOCAL API
+    path('api/user/', include('users.api.urls')),
+    path('api/member/', include('members.api.urls')),
+    path('api/communities/', include('communities.api.urls')),
+    path('api/partners/', include('partners.api.urls')),
+
+    # PASSWORD RESET
+    path('api/user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
     # REST FRAMEWORK
     path('api-auth/', include('rest_framework.urls')),
 
     # OAUTH2
-    # path('oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
+    path('oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
     # JWT TOKEN
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

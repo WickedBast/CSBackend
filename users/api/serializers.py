@@ -1,38 +1,80 @@
 from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from django.utils.translation import gettext as _
+from django.contrib.auth.password_validation import validate_password
+from django.core.validators import validate_email
+
+from members.api.serializers import (
+    IndividualMemberCreationSerializer,
+    CompanyMemberCreationSerializer,
+)
+from partners.api.serializers import (
+    PartnerCreationSerializer
+)
 
 from users.models import User
+from members.models import Member
+from partners.models import Partner
 from django.contrib import auth
 
 
-# TODO: FORGOT PASSWORD
+# REGISTRATION
+class RegistrationSerializer(serializers.Serializer):
+    email = serializers.EmailField(write_only=True, max_length=50)
+    types = serializers.CharField(write_only=True)
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['email', 'password', 'password2']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
-
-    def save(self):
-        account = User(
-            email=self.validated_data['email'],
+    def create(self, validated_data):
+        user = User(
+            email=validated_data["email"],
+            types=validated_data["types"],
         )
+        try:
+            if self.validateEmail(validated_data["email"]):
+            #    if user.types == "Individual" or "Company":
+            #        user.member = Member.objects.create()
+            #    elif user.types == "Partner":
+            #        user.partners = Partner.objects.create()
+                user.save()
+        except:
+            raise ValidationError({"email": [_("User already exists")]})
 
-        password = self.validated_data['password']
-        password2 = self.validated_data['password2']
+        return user
 
-        if password != password2:
-            raise serializers.ValidationError({'password': 'Passwords must match'})
+    def validateEmail(self, email):
+        try:
+            validate_email(email)
+            return True
+        except ValidationError:
+            return False
 
-        account.set_password(password)
-        account.save()
-        return account
+    def save_type(self):
+        if self.validated_data["types"] == "Individual":
+            member_serializer = IndividualMemberCreationSerializer()
+            if member_serializer.is_valid():
+                member = member_serializer.create(self.validated_data)
+                return member
+        elif self.validated_data["types"] == "Company":
+            member_serializer = CompanyMemberCreationSerializer()
+            if member_serializer.is_valid():
+                member = member_serializer.create(self.validated_data)
+                return member
+        elif self.validated_data["types"] == "Partner":
+            partner_serializer = PartnerCreationSerializer()
+            if partner_serializer.is_valid():
+                partner = partner_serializer.create(self.validated_data)
+                return partner
 
 
+class RegistrationPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True, validators=[validate_password], max_length=128, min_length=6
+    )
+    password2 = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True, validators=[validate_password], max_length=128, min_length=6
+    )
+
+
+# EMAIL VERIFICATION
 class EmailVerificationSerializer(serializers.ModelSerializer):
     token = serializers.CharField(max_length=555)
 
@@ -41,28 +83,12 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
         fields = ['token']
 
 
-class LoginSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=255, min_length=3)
-    password = serializers.CharField(max_length=68, min_length=6, write_only=True)
-    tokens = serializers.CharField(max_length=300, min_length=6, read_only=True)
+# CHANGE PASSWORD
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'tokens']
-
-    def validate(self, attrs):
-        email = attrs.get('email', '')
-        password = attrs.get('password', '')
-
-        user = auth.authenticate(email=email, password=password)
-
-        if not user:
-            raise AuthenticationFailed('Invalid Credentials, try again')
-
-        if not user.is_active:
-            raise AuthenticationFailed('Account disabled, contact admin')
-
-        return {
-            'email': user.email,
-            'tokens': user.tokens
-        }
+        fields = ('old_password', 'new_password', 'confirm_new_password')

@@ -1,13 +1,16 @@
 from django.urls import path
 from users.api.views import (
-    registration_view,
+    RegistrationView,
+    ChangePasswordView,
+    RegistrationPasswordView,
+    VerifyEmailView,
 )
-
-from rest_framework.authtoken.views import obtain_auth_token
 
 app_name = "users"
 
 urlpatterns = [
-    path('register', registration_view, name="register"),
-    path('login', obtain_auth_token, name="login"),
+    path('register/', RegistrationView.as_view(), name="register"),
+    path('registration_password/', RegistrationPasswordView.as_view(), name="registration_password"),
+    path('verify_email/', VerifyEmailView.as_view(), name="verify_email"),
+    path('change_password/', ChangePasswordView.as_view(), name="change_password"),
 ]

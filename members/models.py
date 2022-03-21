@@ -1,5 +1,6 @@
 from django.db import models
-from community.models import Community
+from communities.models import Community
+from django.utils.translation import gettext_lazy as _
 
 
 class Member(models.Model):
@@ -9,7 +10,8 @@ class Member(models.Model):
         PROSUMENT = "PROSUMENT", "Prosument"
         BENEFICIARY = "BENEFICIARY", "Beneficiary"
 
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
+    # user = models.ManyToManyField(User, blank=True)
 
     type = models.CharField(max_length=20, choices=Types.choices)
     first_name = models.CharField(max_length=30, verbose_name="first name", blank=True, null=True)
@@ -17,8 +19,11 @@ class Member(models.Model):
     organization_name = models.CharField(max_length=50, verbose_name="organization name", blank=True, null=True)
     nip_number = models.CharField(max_length=10, verbose_name="nip number", blank=True, null=True)
     phone_number = models.CharField(max_length=20, verbose_name="phone number")
-    energy_tariff = models.CharField(max_length=30, verbose_name="energy tariff", blank=True, null=True)
+    zip_code = models.CharField(max_length=10, verbose_name="zip code")
+    address = models.CharField(max_length=100, verbose_name="address", blank=True, null=True)
+    city = models.CharField(max_length=30, verbose_name="city", blank=True, null=True)
 
+    energy_tariff = models.CharField(max_length=30, verbose_name="energy tariff", blank=True, null=True)
     pv_technology = models.CharField(max_length=30, verbose_name="pv technology", blank=True, null=True)
     pv_power_peak_installed = models.IntegerField(verbose_name="pv power peak installed", blank=True, null=True)
     system_loss = models.IntegerField(verbose_name="system loss", blank=True, null=True)
@@ -28,6 +33,8 @@ class Member(models.Model):
 
     class Meta:
         ordering = ["-id"]
+        verbose_name = _("Member")
+        verbose_name_plural = _("Members")
 
     def __str__(self):
-        return self.first_name
+        return self.first_name or self.organization_name
