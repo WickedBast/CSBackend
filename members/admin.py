@@ -25,7 +25,7 @@ class MemberAdmin(GroupAdmin):
         ('Photovoltaic Fields', {'fields': (
             'pv_technology', 'pv_power_peak_installed', 'system_loss', 'mounting_position', 'slope', 'azimuth'
         )}),
-        ('Community', {'fields': ('communities',)})
+        ('Community', {'fields': ('community',)})
     )
 
     add_fieldsets = (
@@ -41,7 +41,7 @@ class MemberAdmin(GroupAdmin):
         ('Photovoltaic Fields', {'fields': (
             'pv_technology', 'pv_power_peak_installed', 'system_loss', 'mounting_position', 'slope', 'azimuth'
         )}),
-        ('Community', {'fields': ('communities',)})
+        ('Community', {'fields': ('community',)})
     )
 
     inlines = (UserInline,)
