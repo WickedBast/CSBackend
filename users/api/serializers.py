@@ -13,8 +13,8 @@ from partners.api.serializers import (
 )
 
 from users.models import User
-from members.models import Member
-from partners.models import Partner
+from members.models import Member, MemberUsers
+from partners.models import Partner, PartnerUsers
 from django.contrib import auth
 
 
@@ -30,10 +30,16 @@ class RegistrationSerializer(serializers.Serializer):
         )
         try:
             if self.validateEmail(validated_data["email"]):
-            #    if user.types == "Individual" or "Company":
-            #        user.member = Member.objects.create()
-            #    elif user.types == "Partner":
-            #        user.partners = Partner.objects.create()
+                if user.types == "Individual" or "Company":
+                    member = self.save_type()
+                    member_user = MemberUsers.objects.get(member=member)
+                    member_user.member = member
+                    member_user.users.save(user)
+                elif user.types == "Partner":
+                    partner = self.save_type()
+                    partner_user = PartnerUsers.objects.get(partner=partner)
+                    partner_user.partner = partner
+                    partner_user.users.save(user)
                 user.save()
         except:
             raise ValidationError({"email": [_("User already exists")]})
