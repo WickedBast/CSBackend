@@ -1,0 +1,10 @@
+{
+  "login": [
+    {
+      "username": "fabian@vivadrive.io",
+      "password": "admin123456",
+      "grant_type": "password",
+      "client_id": "nIopRkcsZX28Ng2JJikWcGeD5FqY1gSlaqFWofWL",
+      "client_secret": "sdV7VTSYzOOwioptYXjzWTffsMeeLIRItdqQ7NbIZpMfT2PFjWY1RHvf2aVnZQJZHaTDOueBlybEAslG50sxADHqFyclF5MXvYX4rcOieqSHavrH81qUQEGOt6Bzc1NI"
+    },
+  ],
