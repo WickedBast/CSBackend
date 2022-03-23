@@ -125,7 +125,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_ROOT = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 STATIC_URL = 'static/'
 
@@ -146,7 +146,9 @@ REST_FRAMEWORK = {
 }
 
 OAUTH2_PROVIDER = {
-    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'},
+
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 900,
 }
 
 AUTHENTICATION_BACKENDS = [

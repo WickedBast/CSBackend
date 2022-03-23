@@ -32,13 +32,3 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     )
 
     msg.send(fail_silently=True)
-
-
-'''
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_access_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        AccessToken.objects.create(expires=datetime.now() + timedelta(minutes=10), user=instance)
-        RefreshToken.objects.create(user=instance)
-'''
