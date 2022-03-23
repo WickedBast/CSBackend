@@ -1,13 +1,12 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from users.models import User
 
 
 class Community(models.Model):
     class Types(models.TextChoices):
         MUNICIPALITY = "MUNICIPALITY", "Municipality"
         COOPERATIVE = "COOPERATIVE", "Cooperative"
-
-    # users = models.ManyToManyField(User, blank=True)
 
     type = models.CharField(_('Types'), max_length=20, choices=Types.choices)
     name = models.CharField(max_length=30, verbose_name="name")
@@ -23,3 +22,16 @@ class Community(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CommunityUsers(models.Model):
+    community = models.ForeignKey(Community, models.CASCADE, null=True)
+    users = models.OneToOneField(User, models.CASCADE, null=True)
+
+    date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
+    last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
+
+    class Meta:
+        ordering = ["-id"]
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")

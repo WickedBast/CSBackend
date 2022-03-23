@@ -1,15 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import GroupAdmin
-
-from communities.models import Community
-from users.models import User
+from communities.models import Community, CommunityUsers
 
 
 class UserInline(admin.TabularInline):
-    model = User
-    fields = ('email',)
-    raw_id_fields = ['community']
-    extra = 0
+    model = CommunityUsers
+    raw_id_fields = ['users']
 
 
 class CommunityAdmin(GroupAdmin):
@@ -18,15 +14,14 @@ class CommunityAdmin(GroupAdmin):
     readonly_fields = ()
     ordering = ('name',)
 
-    inlines = (UserInline,)
-
+    inlines = (UserInline, )
     filter_horizontal = ()
     list_filter = ()
 
     fieldsets = (
         (None, {'fields': ('type',)}),
         ('Community Information', {'fields': ('name', 'phone_number')}),
-        ('Address Information', {'fields': ('zip_code', 'address', 'city')})
+        ('Address Information', {'fields': ('zip_code', 'address', 'city')}),
     )
 
 

@@ -1,14 +1,11 @@
 from django.contrib import admin
-from partners.models import Partner
-from users.models import User
+from partners.models import Partner, PartnerUsers
 from django.contrib.auth.admin import GroupAdmin
 
 
 class UserInline(admin.TabularInline):
-    model = User
-    fields = ('email',)
-    raw_id_fields = ['partner']
-    extra = 0
+    model = PartnerUsers
+    raw_id_fields = ['users']
 
 
 class PartnerAdmin(GroupAdmin):
@@ -25,7 +22,6 @@ class PartnerAdmin(GroupAdmin):
     )
 
     inlines = (UserInline,)
-
     filter_horizontal = ('communities',)
     list_filter = ()
 

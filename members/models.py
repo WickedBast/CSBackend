@@ -1,5 +1,6 @@
 from django.db import models
 from communities.models import Community
+from users.models import User
 from django.utils.translation import gettext_lazy as _
 
 
@@ -11,7 +12,6 @@ class Member(models.Model):
         BENEFICIARY = "BENEFICIARY", "Beneficiary"
 
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
-    # user = models.ManyToManyField(User, blank=True)
 
     type = models.CharField(max_length=20, choices=Types.choices)
     first_name = models.CharField(max_length=30, verbose_name="first name", blank=True, null=True)
@@ -38,3 +38,16 @@ class Member(models.Model):
 
     def __str__(self):
         return self.first_name or self.organization_name
+
+
+class MemberUsers(models.Model):
+    member = models.ForeignKey(Member, models.CASCADE, null=True)
+    users = models.OneToOneField(User, models.CASCADE, null=True)
+
+    date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
+    last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
+
+    class Meta:
+        ordering = ["-id"]
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
