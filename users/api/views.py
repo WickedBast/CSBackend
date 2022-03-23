@@ -50,7 +50,7 @@ class RegistrationView(CreateAPIView):
         else:
             return Response({
                 "response": "Something went wrong!"
-            }, status=status.HTTP_406_NOT_ACCEPTABLE)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegistrationPasswordView(UpdateAPIView):
