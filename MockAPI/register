@@ -1,0 +1,23 @@
+{[
+{
+"postalCode": "80-842",
+"addOrganization": "true",
+"username": "fabian@vivadrive.io",
+"firstName": "Fabian",
+"lastName": "Rzadkowski",
+"havePV": "true",
+"isIndividual": ""true,
+"marketingAccepted": "true",
+"organizationId": "123456789",
+"phoneNumber": "987654321",
+"regulationsAccepted": "true",
+"taxNumber": "",
+"types": "Individual",
+"technology": "",
+"installedPeakPVPower": "".
+"systemLoss": "",
+"mountingPosition": "",
+"slope": "",
+"azimuth": "",
+}
+]}
