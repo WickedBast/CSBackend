@@ -4,10 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from oauth2_provider.models import AccessToken, RefreshToken
 from rest_framework.authtoken.models import Token
 
-from communities.models import Community
-from members.models import Member
-from partners.models import Partner
-
 
 class AdministratorUser(BaseUserManager):
     def create_user(self, email, types, password=None):
@@ -44,10 +40,6 @@ class User(AbstractBaseUser):
         INDIVIDUAL = "Individual", "INDIVIDUAL"
         ORGANIZATION = "Company", "COMPANY"
         PARTNER = "Partner", "PARTNER"
-
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, blank=True, null=True)
-    partner = models.ForeignKey(Partner, on_delete=models.CASCADE, blank=True, null=True)
 
     email = models.EmailField(max_length=50, unique=True, verbose_name='email')
     password = models.CharField(max_length=128, verbose_name='password', blank=True, null=True)

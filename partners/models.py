@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from communities.models import Community
 
+from users.models import User
+
 
 class Partner(models.Model):
     class Types(models.TextChoices):
@@ -14,7 +16,6 @@ class Partner(models.Model):
         ENERGY_COMPANY = "ENERGY COMPANY", "Energy Company"
 
     communities = models.ManyToManyField(Community, blank=True)
-    # user = models.ManyToManyField(User, blank=True)
 
     type = models.CharField(_('Types'), max_length=30, choices=Types.choices)
     partner_type = models.CharField(_('Partner_Types'), max_length=30, choices=PartnerTypes.choices, blank=True,
@@ -33,3 +34,16 @@ class Partner(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PartnerUsers(models.Model):
+    partner = models.ForeignKey(Partner, models.CASCADE, null=True)
+    users = models.OneToOneField(User, models.CASCADE, null=True)
+
+    date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
+    last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
+
+    class Meta:
+        ordering = ["-id"]
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
