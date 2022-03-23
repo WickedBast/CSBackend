@@ -2,22 +2,27 @@
 {
 "postalCode": "80-842",
 "addOrganization": "true",
+"companyName": "Test_Company",
+"detailsInfo": {
+    "addOrganization": "true",
+    "technology": "Technology 1",
+    "installedPeakPVPower": "123".
+    "systemLoss": "123",
+    "mountingPosition": "123",
+    "slope": "123",
+    "azimuth": "123",
+}
 "username": "fabian@vivadrive.io",
 "firstName": "Fabian",
 "lastName": "Rzadkowski",
 "havePV": "true",
+"nip": "1234567890",
 "isIndividual": ""true,
 "marketingAccepted": "true",
 "organizationId": "123456789",
 "phoneNumber": "987654321",
 "regulationsAccepted": "true",
-"taxNumber": "",
+"taxNumber": "G13",
 "types": "Individual",
-"technology": "",
-"installedPeakPVPower": "".
-"systemLoss": "",
-"mountingPosition": "",
-"slope": "",
-"azimuth": "",
 }
 ]}
