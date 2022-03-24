@@ -68,4 +68,23 @@
       "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
     }
     ]
+  "graph" : [
+  {
+  "id" : 11,
+  "title" : "Satistics",
+  
+  },
+  ]
+  "list": [
+    {
+      "title": "Benefits",
+      "items" : [{
+          "logo" : "PzuLogo.png",
+          "text" : "30% discount for PZU Dom insurance"
+                },
+                {
+          "logo" : "PkoLogo.png",
+          "text" : "Eko pożyczka PKO"
+                }]
+    },
 }
