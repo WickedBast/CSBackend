@@ -71,13 +71,6 @@
       "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
     }
     ]
-  "graph" : [
-  {
-  "id" : 11,
-  "title" : "Satistics",
-  
-  },
-  ]
   "benefits": [
          {
           "logo" : "PzuLogo.png",
