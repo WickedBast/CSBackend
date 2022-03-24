@@ -75,16 +75,22 @@
   
   },
   ]
-  "list": [
-    {
-      "title": "Benefits",
-      "items" : [{
+  "benefits": [
+         {
           "logo" : "PzuLogo.png",
           "text" : "30% discount for PZU Dom insurance"
-                },
-                {
+         },
+         {
           "logo" : "PkoLogo.png",
           "text" : "Eko pożyczka PKO"
-                }]
-    },
+         },
+             ]
+   "partners" : [
+             { 
+             "logo" : "PzuLogo.png".
+             "logo" : "PkoLogo.png".
+             }
+                ]
+                
+
 }
