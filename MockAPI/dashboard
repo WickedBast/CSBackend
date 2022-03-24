@@ -1,5 +1,71 @@
-[{
-"widget" { 
-"" : 49,
+{
+  "widget" : [ 
+    { 
+      "id" : 1,
+      "label" : "Total energy produced from PV",
+      "value" : 49,
+      "difference" : "2.6",
+      "info" : "Difference between last week and a current one",
+      "icon" : ""
+    },
+    { 
+      "id" : 2,
+      "label" : "Total energy taken from grid",
+      "value" : 15,
+      "difference" : "1.6",
+      "info" : "Difference between last week and a current one",
+      "icon" : ""
+    },
+    { 
+      "id" : 3,
+      "label" : "Total energy consumed",
+      "value" : 63,
+      "difference" : "3.2",
+      "info" : "Difference between last week and a current one",
+      "icon" : ""
+    },
+    { 
+      "id" : 4,
+      "label" : "Neutrality Certificate Score",
+      "value" : 7.4,
+      "icon" : ""
+    },
+    { 
+      "id" : 5,
+      "label" : "Energy from PV",
+      "value" : 7.4,
+      "icon" : ""
+    },
+    { 
+      "id" : 6,
+      "label" : "Energy from grid",
+      "value" : 7.4,
+      "icon" : ""
+    },
+    { 
+      "id" : 7,
+      "label" : "Consumed energy",
+      "value" : 7.4,
+      "icon" : ""
+    },
+    { 
+      "id" : 8,
+      "label" : "CO2 saved",
+      "value" : 7.4,
+      "icon" : ""
+    },
+    { 
+      "id" : 9,
+      "label" : "Carbon footprint",
+      "value" : 7.4,
+      "icon" : ""
+    },
+    { 
+      "id" : 10,
+      "label" : "Trees equivalent",
+      "value" : 7.4,
+      "icon" : "",
+      "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
+    }
+    ]
 }
-}]
