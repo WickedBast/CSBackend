@@ -1,10 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
-
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
+from CSBackend import views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -30,8 +29,9 @@ urlpatterns = [
     # LOCAL API
     path('api/user/', include('users.api.urls')),
     path('api/member/', include('members.api.urls')),
-    path('api/communities/', include('communities.api.urls')),
-    path('api/partners/', include('partners.api.urls')),
+    path('api/community/', include('communities.api.urls')),
+    path('api/partner/', include('partners.api.urls')),
+    path('api/nip/<nip>/', views.CompanyNIP.as_view()),
 
     # PASSWORD RESET
     path('api/user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),

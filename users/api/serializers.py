@@ -1,21 +1,9 @@
-from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
-from django.utils.translation import gettext as _
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
-
-from members.api.serializers import (
-    IndividualMemberCreationSerializer,
-    CompanyMemberCreationSerializer,
-)
-from partners.api.serializers import (
-    PartnerCreationSerializer
-)
-
+from django.utils.translation import gettext as _
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from users.models import User
-from members.models import Member, MemberUsers
-from partners.models import Partner, PartnerUsers
-from django.contrib import auth
 
 
 # REGISTRATION
@@ -30,16 +18,6 @@ class RegistrationSerializer(serializers.Serializer):
         )
         try:
             if self.validateEmail(validated_data["email"]):
-                # if user.types == "Individual" or "Company":
-                #     member = self.save_type()
-                #     member_user = MemberUsers.objects.get(member=member)
-                #     member_user.member = member
-                #     member_user.users.save(user)
-                # elif user.types == "Partner":
-                #     partner = self.save_type()
-                #     partner_user = PartnerUsers.objects.get(partner=partner)
-                #     partner_user.partner = partner
-                #     partner_user.users.save(user)
                 user.save()
         except:
             raise ValidationError({"email": [_("User already exists")]})
@@ -52,23 +30,6 @@ class RegistrationSerializer(serializers.Serializer):
             return True
         except ValidationError:
             return False
-
-    def save_type(self):
-        if self.validated_data["types"] == "Individual":
-            member_serializer = IndividualMemberCreationSerializer()
-            if member_serializer.is_valid():
-                member = member_serializer.create(self.validated_data)
-                return member
-        elif self.validated_data["types"] == "Company":
-            member_serializer = CompanyMemberCreationSerializer()
-            if member_serializer.is_valid():
-                member = member_serializer.create(self.validated_data)
-                return member
-        elif self.validated_data["types"] == "Partner":
-            partner_serializer = PartnerCreationSerializer()
-            if partner_serializer.is_valid():
-                partner = partner_serializer.create(self.validated_data)
-                return partner
 
 
 class RegistrationPasswordSerializer(serializers.Serializer):

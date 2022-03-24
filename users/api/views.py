@@ -1,19 +1,12 @@
 import jwt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
-import random
 from django.conf import settings
 from users.models import User
-
-from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
-from oauth2_provider.models import AccessToken, RefreshToken
-from datetime import datetime, timedelta
-
 from rest_framework.views import APIView
 from rest_framework.generics import (
     CreateAPIView,
