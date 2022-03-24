@@ -1,57 +1,24 @@
-from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.response import Response
-
-from django.utils.translation import gettext as _
-
-from nip24 import *
+from rest_framework.generics import CreateAPIView
+from members.api.serializers import MemberCreationSerializer
 
 
-class FleetNip(APIView):
+class MemberCreationView(CreateAPIView):
+    serializer_class = MemberCreationSerializer
+    permission_classes = []
+    authentication_classes = []
 
-    def get(self, request, nip):
-
-        id = "5gOElQTlpEZl"
-        key = "FCv4dvZz0tHe"
-        nip24 = NIP24Client(id, key)
-
-        all = nip24.getAllDataExt(Number.NIP, nip)
-        if all:
-            response = {
-                "company_name": all.name,
-                "nip": all.nip,
-                "street": all.street,
-                "streetNumber": all.streetNumber,
-                "houseNumber": all.houseNumber,
-                "city": all.city,
-                "postCode": all.postCode,
-                "postCity": all.postCity,
-            }
-            try:
-                address = response["street"] + " " + \
-                    response["streetNumber"] + " " + response["houseNumber"]
-
-                pkpcode = [
-                    {
-                        "code": al.code,
-                        "primary": al.primary,
-                    } for al in all.pkd[0:3]
-                ],
-            except Exception as e:
-                print(e)
-            return Response(response)
-
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            member = serializer.save()
+            return Response({
+                "response": "Member Successfully Created.",
+                "type": member.type,
+                "pk": member.pk,
+            }, status=status.HTTP_201_CREATED)
         else:
-            return Response({"error": _("NIP not found")})
-
-'''
-                models.CompanyLead.objects.create(
-                    company_name=response["company_name"],
-                    company_nip=response["nip"],
-                    company_regon=all.regon, 
-                    address=address,
-                    postcode=response["postCode"],
-                    city=response["city"],
-                    pkp_codes=pkpcode,
-                    phone=all.phone,
-                    email=all.email)
-'''
+            return Response({
+                "response": "Something went wrong!"
+            }, status=status.HTTP_400_BAD_REQUEST)

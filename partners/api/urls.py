@@ -4,5 +4,5 @@ from partners.api import views
 app_name = "partners"
 
 urlpatterns = [
-    path('nip/<nip>/', views.FleetNip.as_view()),
+    path('register/', views.PartnerCreationView.as_view())
 ]
