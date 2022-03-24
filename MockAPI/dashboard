@@ -69,34 +69,6 @@
       "value" : 234,
       "icon" : "",
       "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
-    },
-        { 
-      "id" : 11,
-      "label" : "Trees equivalent",
-      "value" : 234,
-      "icon" : "",
-      "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
-    },
-        { 
-      "id" : 12,
-      "label" : "Trees equivalent",
-      "value" : 234,
-      "icon" : "",
-      "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
-    },
-        { 
-      "id" : 13,
-      "label" : "Trees equivalent",
-      "value" : 234,
-      "icon" : "",
-      "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
-    },
-        { 
-      "id" : 14,
-      "label" : "Trees equivalent",
-      "value" : 234,
-      "icon" : "",
-      "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
     }
     ]
   "graph" : [
