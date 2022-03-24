@@ -33,37 +33,40 @@
     { 
       "id" : 5,
       "label" : "Energy from PV",
-      "value" : 7.4,
+      "value" : 49,
+      "price" : "32.56",
       "icon" : ""
     },
     { 
       "id" : 6,
       "label" : "Energy from grid",
-      "value" : 7.4,
+      "value" : 14,
+      "price" : "12.56",
       "icon" : ""
     },
     { 
       "id" : 7,
       "label" : "Consumed energy",
-      "value" : 7.4,
+      "value" : 63,
+      "price" : "42.56",
       "icon" : ""
     },
     { 
       "id" : 8,
       "label" : "CO2 saved",
-      "value" : 7.4,
+      "value" : 37,
       "icon" : ""
     },
     { 
       "id" : 9,
       "label" : "Carbon footprint",
-      "value" : 7.4,
+      "value" : 10,
       "icon" : ""
     },
     { 
       "id" : 10,
       "label" : "Trees equivalent",
-      "value" : 7.4,
+      "value" : 234,
       "icon" : "",
       "info" : "27kg net saved CO2/6kg CO2 absorbed by one tree yearly x 54 weeks  = 234 trees",
     }
@@ -91,6 +94,10 @@
              "logo" : "PkoLogo.png".
              }
                 ]
-                
-
+   "score_comparison" : {
+      "percentage1" : "50",
+      "percentage2" : "20",
+      "percentage3" : "20",
+      "percentage4" : "10",
+   }
 }
