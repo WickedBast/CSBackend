@@ -1,0 +1,19 @@
+[
+  {
+    "firstName" : "Leo",
+    "lastName" : "DiCaprio",
+    "district" : "Mazowieckie",
+    "postalCode" : "22-333",
+    "city" : "Warsaw",
+    "street" : "Dobra",
+    "houseNumber" : "11",
+    "apartmentNumber" : "23",
+    "phoneNumber" : "123456789",
+    "email" : "abc@gmail.com",
+    "contract" : "attach",
+    "companyName" : "Tesla",
+    "nip" : "1234567890",
+    "csvFile" : "attach",
+    "linksPvpp" : "",
+  } 
+]
