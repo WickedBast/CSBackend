@@ -14,6 +14,7 @@
     "companyName" : "Tesla",
     "nip" : "1234567890",
     "csvFile" : "attach",
+    "personsInHousehold" : 1,
     "linksPvpp" : "",
   } 
 ]
