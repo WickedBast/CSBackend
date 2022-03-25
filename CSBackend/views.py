@@ -11,13 +11,9 @@ load_dotenv()
 
 class CompanyNIP(APIView):
     def get(self, request, nip):
-        try:
-            ID = "CKmRm00AxAtX"
-            KEY = "2vhnQmfRu9G3"
-            nip24 = NIP24Client(id=ID, key=KEY)
-        except:
-            return Response({"error": _("NIP API credentials are wrong")}, status=status.HTTP_401_UNAUTHORIZED)
-
+        ID = "CKmRm00AxAtX"
+        KEY = "2vhnQmfRu9G3"
+        nip24 = NIP24Client()
         data = nip24.getAllDataExt(Number.NIP, nip)
 
         if data:
