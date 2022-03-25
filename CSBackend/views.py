@@ -1,3 +1,5 @@
+import os
+
 from django.utils.translation import gettext as _
 from dotenv import load_dotenv
 from rest_framework import status
@@ -11,9 +13,9 @@ load_dotenv()
 
 class CompanyNIP(APIView):
     def get(self, request, nip):
-        ID = "CKmRm00AxAtX"
-        KEY = "2vhnQmfRu9G3"
-        nip24 = NIP24Client()
+        ID = os.getenv("NIP_ID")
+        KEY = os.getenv("NIP_KEY")
+        nip24 = NIP24Client(id=ID, key=KEY)
         data = nip24.getAllDataExt(Number.NIP, nip)
 
         if data:

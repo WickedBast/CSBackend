@@ -46,8 +46,8 @@ class NIP24Client:
     PRODUCTION_URL = 'https://www.nip24.pl/api'
     TEST_URL = 'https://www.nip24.pl/api-test'
 
-    TEST_ID = 'CKmRm00AxAtX'
-    TEST_KEY = '2vhnQmfRu9G3'
+    TEST_ID = 'test_id'
+    TEST_KEY = 'test_key'
 
     HMAC_ALG = hashlib.sha256
 
