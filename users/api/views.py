@@ -54,7 +54,7 @@ class RegistrationView(CreateAPIView):
 
     def send_registration_email(self, user):
         return requests.post(
-            "https://api.mailgun.net/v3/sandboxe3a830b3b59b49dfa0c93289aa123a54.mailgun.org/messages",
+            "https://api.mailgun.net/v3/cleanstock.eu/messages",
             auth=("api", os.getenv("MAILGUN_API_KEY")),
             data={"from": os.getenv("DEFAULT_FROM_EMAIL"),
                   "to": [user.email],
