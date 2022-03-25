@@ -1,4 +1,4 @@
-Maimport os
+import os
 
 import jwt
 import requests
