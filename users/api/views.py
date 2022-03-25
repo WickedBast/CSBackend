@@ -1,4 +1,7 @@
+Maimport os
+
 import jwt
+import requests
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.conf import settings
@@ -22,6 +25,9 @@ from users.api.serializers import (
     ChangePasswordSerializer,
     RegistrationPasswordSerializer,
 )
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class RegistrationView(CreateAPIView):
@@ -33,6 +39,7 @@ class RegistrationView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
+            self.send_registration_email(user=user)
             return Response({
                 "response": "User Successfully Created.",
                 "email": user.email,
@@ -44,6 +51,16 @@ class RegistrationView(CreateAPIView):
             return Response({
                 "response": "Something went wrong!"
             }, status=status.HTTP_400_BAD_REQUEST)
+
+    def send_registration_email(self, user):
+        return requests.post(
+            "https://api.mailgun.net/v3/sandboxe3a830b3b59b49dfa0c93289aa123a54.mailgun.org/messages",
+            auth=("api", os.getenv("MAILGUN_API_KEY")),
+            data={"from": os.getenv("DEFAULT_FROM_EMAIL"),
+                  "to": [user.email],
+                  "subject": "Welcome to CleanStock",
+                  "text": "Hello " + user.email + ". To complete the registration, you have to click the link below"
+                                                  "and create a password."})
 
 
 class RegistrationPasswordView(UpdateAPIView):
