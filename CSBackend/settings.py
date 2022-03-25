@@ -156,6 +156,14 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+EMAIL_HOST = 'smtp.eu.mailgun.org'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'postmaster@cleanstock.eu'
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'Clean Stock Team <noreply@cleanstock.eu>'
+EMAIL_USE_TLS = True
+
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Logs out the user after the browser is closed
 SESSION_COOKIE_AGE = 900  # Session expire after 15 minutes
 SESSION_SAVE_EVERY_REQUEST = True
