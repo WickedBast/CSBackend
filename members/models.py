@@ -39,6 +39,9 @@ class Member(models.Model):
     def __str__(self):
         return self.first_name or self.organization_name
 
+    def get_full_name(self):
+        return self.first_name + " " + self.last_name
+
 
 class MemberUsers(models.Model):
     member = models.ForeignKey(Member, models.CASCADE, null=True)

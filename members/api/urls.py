@@ -5,4 +5,5 @@ app_name = "members"
 
 urlpatterns = [
     path('register/', views.MemberCreationView.as_view()),
+    path('dashboard/', views.DashboardView.as_view()),
 ]

@@ -1,17 +1,18 @@
+import os
+
+import requests
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.utils.translation import gettext as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from users.models import User
-from members.models import Member, MemberUsers
 
 
 # REGISTRATION
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True, max_length=50)
     types = serializers.CharField(write_only=True)
-    first_name = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
         user = User(
@@ -21,10 +22,22 @@ class RegistrationSerializer(serializers.Serializer):
         try:
             if self.validateEmail(validated_data["email"]):
                 user.save()
+                self.send_confirmation_email(user=user)
         except:
             raise ValidationError({"email": [_("User already exists")]})
 
         return user
+
+    def send_confirmation_email(self, user):
+        return requests.post(
+            "https://api.eu.mailgun.net/v3/cleanstock.eu/messages",
+            auth=("api", os.getenv("MAILGUN_API_KEY")),
+            data={"from": "Clean Stock Team <noreply@cleanstock.eu>",
+                  "to": user.email,
+                  "subject": "Welcome to Clean Stock",
+                  "template": "confirm_email",
+                  "h:X-Mailgun-Variables": {"test": "test"}}
+        )
 
     def validateEmail(self, email):
         try:
