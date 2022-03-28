@@ -4,12 +4,14 @@ from django.utils.translation import gettext as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from users.models import User
+from members.models import Member, MemberUsers
 
 
 # REGISTRATION
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True, max_length=50)
     types = serializers.CharField(write_only=True)
+    first_name = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
         user = User(

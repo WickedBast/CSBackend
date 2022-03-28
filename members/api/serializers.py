@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from members.models import Member, MemberUsers
+from members.models import Member
 
 
 class MemberCreationSerializer(serializers.ModelSerializer):
@@ -30,8 +30,6 @@ class MemberCreationSerializer(serializers.ModelSerializer):
                 zip_code=self.validated_data['zip_code']
             )
             member.save()
-            MemberUsers.member = member
-            MemberUsers.save()
             return member
         elif 'organization_name' in self.validated_data.keys():
             member = Member(
@@ -51,5 +49,4 @@ class MemberCreationSerializer(serializers.ModelSerializer):
                 zip_code=self.validated_data['zip_code']
             )
             member.save()
-            MemberUsers.member = member
             return member

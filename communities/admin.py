@@ -20,8 +20,11 @@ class CommunityAdmin(GroupAdmin):
 
     fieldsets = (
         (None, {'fields': ('type',)}),
-        ('Community Information', {'fields': ('name', 'phone_number')}),
+        ('Community Information', {'fields': ('name', 'phone_number', 'energy_tariff')}),
         ('Address Information', {'fields': ('zip_code', 'address', 'city')}),
+        ('Photovoltaic Fields', {'fields': (
+            'pv_technology', 'pv_power_peak_installed', 'system_loss', 'mounting_position', 'slope', 'azimuth'
+        )}),
     )
 
 

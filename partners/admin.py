@@ -16,8 +16,11 @@ class PartnerAdmin(GroupAdmin):
 
     fieldsets = (
         (None, {'fields': ('type',)}),
-        ('Partner Information', {'fields': ('name', 'partner_type', 'phone_number', 'nip_number')}),
+        ('Partner Information', {'fields': ('name', 'partner_type', 'phone_number', 'nip_number', 'energy_tariff')}),
         ('Address Information', {'fields': ('zip_code', 'address', 'city')}),
+        ('Photovoltaic Fields', {'fields': (
+            'pv_technology', 'pv_power_peak_installed', 'system_loss', 'mounting_position', 'slope', 'azimuth'
+        )}),
         ('Community', {'fields': ('communities',)}),
     )
 
