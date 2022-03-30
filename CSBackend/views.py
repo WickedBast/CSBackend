@@ -6,6 +6,9 @@ from nip24 import *
 
 
 class CompanyNIP(APIView):
+    permission_classes = []
+    authentication_classes = []
+
     def get(self, request, nip):
         ID = os.getenv("NIP_ID")
         KEY = os.getenv("NIP_KEY")
@@ -22,6 +25,7 @@ class CompanyNIP(APIView):
                 "city": data.city,
                 "postCode": data.postCode,
                 "postCity": data.postCity,
+                "regon": data.regon,
             }
             return Response(response, status=status.HTTP_200_OK)
         else:
