@@ -14,6 +14,7 @@ class UsersAdmin(UserAdmin):
         (None, {'fields': ('types',)}),
         ('Credentials', {'fields': ('email', 'password')}),
         ('Permissions', {'fields': ('is_admin', 'is_active')}),
+        ('Token', {'fields': ('token',)})
     )
     add_fieldsets = (
         (None, {'fields': ('types',)}),

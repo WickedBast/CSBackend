@@ -1,14 +1,8 @@
-import os
-
 from django.utils.translation import gettext as _
-from dotenv import load_dotenv
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from nip24 import *
-
-load_dotenv()
 
 
 class CompanyNIP(APIView):

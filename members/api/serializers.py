@@ -53,7 +53,7 @@ class MemberCreationSerializer(serializers.ModelSerializer):
 
 
 class DashboardSerializer(serializers.Serializer):
-    displayName = "Dinesh Kumar"
+    displayName = serializers.SerializerMethodField(read_only=True)
 
     def get_displayName(self, obj):
         return self.context["request"].member.get_full_name()

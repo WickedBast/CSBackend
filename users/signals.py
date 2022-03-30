@@ -1,34 +1,29 @@
 import os
-from dotenv import load_dotenv
+import json
+import requests
 from django.dispatch import receiver
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
-from django.core.mail import EmailMultiAlternatives
-
-load_dotenv()
 
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
     context = {
         'current_user': reset_password_token.user,
-        'fullname': reset_password_token.user.get_full_name(),
         'email': reset_password_token.user.email,
-        'reset_password_url': "{}?token={}".format(reverse('password_reset:reset-password-request'),
-                                                   reset_password_token.key)
+        'reset_password_url': "{}?token={}".format(
+            instance.request.build_absolute_uri(reverse('password_reset:reset-password-confirm')),
+            reset_password_token.key)
     }
 
-    email_plaintext_message = context
-
-    msg = EmailMultiAlternatives(
-        # title:
-        "Password Reset for {title}".format(title="CleanStock Account"),
-        # message:
-        email_plaintext_message,
-        # from:
-        os.getenv("DEFAULT_FROM_EMAIL"),
-        # to:
-        [reset_password_token.user.email]
+    return requests.post(
+        "https://api.eu.mailgun.net/v3/cleanstock.eu/messages",
+        auth=("api", os.getenv("MAILGUN_API_KEY")),
+        data={"from": "Clean Stock Team <noreply@cleanstock.eu>",
+              "to": reset_password_token.user.email,
+              "subject": "Password Reset for Clean Stock Account",
+              "template": "reset_password",
+              "h:X-Mailgun-Variables": json.dumps({"test": "test"})
+              }
     )
 
-    msg.send(fail_silently=True)
