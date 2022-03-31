@@ -42,11 +42,6 @@ urlpatterns = [
     # OAUTH2
     path('oauth/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 
-    # JWT TOKEN
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-
     # SWAGGER
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

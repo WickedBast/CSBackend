@@ -1,11 +1,13 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView
-from members.api.serializers import MemberCreationSerializer
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from members.api import serializers
+from members.models import Member
+from CSBackend.utils import OIsAuthenticated
 
 
 class MemberCreationView(CreateAPIView):
-    serializer_class = MemberCreationSerializer
+    serializer_class = serializers.MemberCreationSerializer
     permission_classes = []
     authentication_classes = []
 
@@ -22,3 +24,11 @@ class MemberCreationView(CreateAPIView):
             return Response({
                 "response": "Something went wrong!"
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DashboardView(RetrieveAPIView):
+    permission_classes = [OIsAuthenticated]
+    serializer_class = serializers.DashboardSerializer
+
+    def get_object(self):
+        return Member()

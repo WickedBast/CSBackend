@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from members.models import Member, MemberUsers
+from members.models import Member
 
 
 class MemberCreationSerializer(serializers.ModelSerializer):
@@ -50,3 +50,10 @@ class MemberCreationSerializer(serializers.ModelSerializer):
             )
             member.save()
             return member
+
+
+class DashboardSerializer(serializers.Serializer):
+    displayName = serializers.SerializerMethodField(read_only=True)
+
+    def get_displayName(self, obj):
+        return self.context["request"].member.get_full_name()

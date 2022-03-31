@@ -1,33 +1,24 @@
-import os
-
 import jwt
-import requests
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 from django.conf import settings
-from users.models import User
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import (
-    CreateAPIView,
-    GenericAPIView,
-    UpdateAPIView,
-    RetrieveAPIView,
-    RetrieveUpdateAPIView,
-    RetrieveUpdateDestroyAPIView
-)
+
 from users.api.serializers import (
     RegistrationSerializer,
     EmailVerificationSerializer,
     ChangePasswordSerializer,
     RegistrationPasswordSerializer,
 )
-from dotenv import load_dotenv
-
-load_dotenv()
+from users.models import User
+from users.tokens import account_activation_token
 
 
 class RegistrationView(CreateAPIView):
@@ -39,7 +30,6 @@ class RegistrationView(CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
-            self.send_registration_email(user=user)
             return Response({
                 "response": "User Successfully Created.",
                 "email": user.email,
@@ -52,44 +42,38 @@ class RegistrationView(CreateAPIView):
                 "response": "Something went wrong!"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-    def send_registration_email(self, user):
-        return requests.post(
-            "https://api.mailgun.net/v3/cleanstock.eu/messages",
-            auth=("api", os.getenv("MAILGUN_API_KEY")),
-            data={"from": os.getenv("DEFAULT_FROM_EMAIL"),
-                  "to": [user.email],
-                  "subject": "Welcome to CleanStock",
-                  "text": "Hello " + user.email + ". To complete the registration, you have to click the link below"
-                                                  "and create a password."})
-
 
 class RegistrationPasswordView(UpdateAPIView):
     serializer_class = RegistrationPasswordSerializer
     permission_classes = []
     authentication_classes = []
 
-    def get_object(self, queryset=None):
-        obj = self.request.user
-        return obj
-
     def update(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        serializer = self.get_serializer(data=request.data)
+        try:
+            uid = force_str(urlsafe_base64_decode(request.GET.get('uidb64')))
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
 
-        if serializer.is_valid():
-            # confirm the new passwords match
-            password = serializer.data.get("password")
-            confirm_password = serializer.data.get("password2")
-            if password != confirm_password:
-                return Response({"password": ["Passwords must match"]}, status=status.HTTP_400_BAD_REQUEST)
+        if user is not None and account_activation_token.check_token(user, request.GET.get('token')):
+            serializer = self.get_serializer(data=request.data)
 
-            # set_password also hashes the password that the user will get
-            self.object.set_password(serializer.data.get("password"))
-            self.request.user.is_active = True
-            self.object.save()
-            return Response({"response": "successfully changed password"}, status=status.HTTP_200_OK)
+            if serializer.is_valid():
+                # confirm the new passwords match
+                password = serializer.data.get("password")
+                confirm_password = serializer.data.get("password2")
+                if password != confirm_password:
+                    return Response({"password": ["Passwords must match"]}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                # set_password also hashes the password that the user will get
+                user.set_password(serializer.data.get("password"))
+                user.is_active = True
+                user.save()
+                return Response({"response": "successfully created the password"}, status=status.HTTP_200_OK)
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"token": ["Token is invalid"]}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyEmailView(APIView):
