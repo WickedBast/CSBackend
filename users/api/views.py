@@ -66,13 +66,13 @@ class RegistrationPasswordView(UpdateAPIView):
 
         if serializer.is_valid():
             # confirm the new passwords match
-            password = serializer.data.get("password")
-            confirm_password = serializer.data.get("password2")
+            password = self.request.data['password']
+            confirm_password = self.request.data['password2']
             if password != confirm_password:
                 return Response({"password": ["Passwords must match"]}, status=status.HTTP_400_BAD_REQUEST)
 
             # set_password also hashes the password that the user will get
-            user.set_password(serializer.data.get("password"))
+            user.set_password(self.request.data['password'])
             user.is_active = True
             user.save()
             return Response({"response": "successfully created the password"}, status=status.HTTP_200_OK)
