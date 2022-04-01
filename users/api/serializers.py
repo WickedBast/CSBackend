@@ -42,7 +42,7 @@ class RegistrationSerializer(serializers.Serializer):
                   "to": user.email,
                   "subject": "Welcome to Clean Stock",
                   "template": "confirm_email",
-                  "v:domain": "127.0.0.1:7000",
+                  "v:domain": os.getenv("DOMAIN"),
                   "v:uid": f"{urlsafe_base64_encode(force_bytes(user.pk))}",
                   "v:token": f"{token}",
                   }
