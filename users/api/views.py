@@ -48,32 +48,36 @@ class RegistrationPasswordView(UpdateAPIView):
     permission_classes = []
     authentication_classes = []
 
-    def update(self, request, *args, **kwargs):
+    def get_object(self, queryset=None):
         try:
-            uid = force_str(urlsafe_base64_decode(request.GET.get('uidb64')))
+            uid = force_str(urlsafe_base64_decode(self.request.GET.get('uidb64', '')))
             user = User.objects.get(pk=uid)
         except(TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
-        if user is not None and account_activation_token.check_token(user, request.GET.get('token')):
-            serializer = self.get_serializer(data=request.data)
+        if user is not None and account_activation_token.check_token(user, self.request.GET.get('token', '')):
+            return user
+        else:
+            return Response({"token": ["Token is invalid"]}, status=status.HTTP_400_BAD_REQUEST)
 
-            if serializer.is_valid():
-                # confirm the new passwords match
-                password = serializer.data.get("password")
-                confirm_password = serializer.data.get("password2")
-                if password != confirm_password:
-                    return Response({"password": ["Passwords must match"]}, status=status.HTTP_400_BAD_REQUEST)
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
 
-                # set_password also hashes the password that the user will get
-                user.set_password(serializer.data.get("password"))
-                user.is_active = True
-                user.save()
-                return Response({"response": "successfully created the password"}, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            # confirm the new passwords match
+            password = serializer.data.get("password")
+            confirm_password = serializer.data.get("password2")
+            if password != confirm_password:
+                return Response({"password": ["Passwords must match"]}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # set_password also hashes the password that the user will get
+            user.set_password(serializer.data.get("password"))
+            user.is_active = True
+            user.save()
+            return Response({"response": "successfully created the password"}, status=status.HTTP_200_OK)
 
-        return Response({"token": ["Token is invalid"]}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyEmailView(APIView):
