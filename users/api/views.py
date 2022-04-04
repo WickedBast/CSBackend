@@ -1,7 +1,6 @@
 import jwt
 from django.conf import settings
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_str
+from django_rest_passwordreset import models
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -18,7 +17,6 @@ from users.api.serializers import (
     RegistrationPasswordSerializer,
 )
 from users.models import User
-from users.tokens import account_activation_token
 
 
 class RegistrationView(CreateAPIView):
@@ -43,41 +41,37 @@ class RegistrationView(CreateAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RegistrationPasswordView(UpdateAPIView):
+class RegistrationPasswordView(CreateAPIView):
     serializer_class = RegistrationPasswordSerializer
     permission_classes = []
     authentication_classes = []
 
-    def get_object(self, queryset=None):
+    def post(self, request, *args, **kwargs):
         try:
-            uid = force_str(urlsafe_base64_decode(self.request.GET.get('uidb64', '')))
-            user = User.objects.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-            user = None
+            data = request.data
+        except (KeyError, ValueError, AttributeError):
+            return Response({"data": ["Data is invalid"]}, status=status.HTTP_400_BAD_REQUEST)
 
-        if user is not None and account_activation_token.check_token(user, self.request.GET.get('token', '')):
-            return user
-        else:
-            return Response({"token": ["Token is invalid"]}, status=status.HTTP_400_BAD_REQUEST)
+        password = data.get('password')
+        token_value = data.get('token')
 
-    def update(self, request, *args, **kwargs):
-        user = self.get_object()
-        serializer = self.get_serializer(data=request.data)
+        if not password:
+            return Response({"password": ["Password is empty"]}, status=status.HTTP_400_BAD_REQUEST)
 
-        if serializer.is_valid():
-            # confirm the new passwords match
-            password = self.request.data['password']
-            confirm_password = self.request.data['password2']
-            if password != confirm_password:
-                return Response({"password": ["Passwords must match"]}, status=status.HTTP_400_BAD_REQUEST)
+        if not token_value:
+            return Response({"token": ["Token is empty"]}, status=status.HTTP_400_BAD_REQUEST)
 
-            # set_password also hashes the password that the user will get
-            user.set_password(self.request.data['password'])
-            user.is_active = True
-            user.save()
-            return Response({"response": "successfully created the password"}, status=status.HTTP_200_OK)
+        try:
+            token = models.ResetPasswordToken.objects.get(key=token_value)
+        except models.ResetPasswordToken.DoesNotExist:
+            return Response({"token": ["Token is invalid or expired"]}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        token.user.set_password(password)
+        token.user.is_active = True
+        token.user.save()
+
+        token.delete()
+        return Response({"response": "successfully created the password"}, status=status.HTTP_200_OK)
 
 
 class VerifyEmailView(APIView):
