@@ -31,4 +31,4 @@ class DashboardView(RetrieveAPIView):
     serializer_class = serializers.DashboardSerializer
 
     def get_object(self):
-        return Member()
+        return self.serializer_class.get_displayName()
