@@ -1,24 +1,19 @@
-import os
-
 from django.utils.translation import gettext as _
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from nip24 import *
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from nip24 import *
+from rest_framework_api_key.permissions import HasAPIKey
+from rest_framework_api_key.models import APIKey
 
 
 class CompanyNIP(APIView):
-    permission_classes = []
+    permission_classes = [HasAPIKey]
     authentication_classes = []
 
-    key = openapi.Parameter('key', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, required=True)
-
-    @swagger_auto_schema(manual_parameters=[key])
     def get(self, request, nip):
-        api_key = os.getenv("API_KEY")
-        if request.GET.get('key') == api_key:
+        key = request.META["HTTP_X_API_KEY"].split()[0]
+        if APIKey.objects.get_from_key(key=key):
             ID = os.getenv("NIP_ID")
             KEY = os.getenv("NIP_KEY")
             nip24 = NIP24Client(id=ID, key=KEY)
@@ -40,4 +35,4 @@ class CompanyNIP(APIView):
             else:
                 return Response({"error": _("NIP not found")}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response({"error": _("Wrong API KEY")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
