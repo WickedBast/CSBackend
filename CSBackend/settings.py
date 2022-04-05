@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     # LIBRARY
     'rest_framework',
     'django_rest_passwordreset',
+    'rest_framework_api_key',
     'oauth2_provider',
     'drf_yasg',
     'django_filters',
@@ -142,6 +143,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'rest_framework_api_key.permissions.HasAPIKey',
     ]
 }
 
@@ -156,6 +158,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Logs out the user after the browser is closed
 SESSION_COOKIE_AGE = 900  # Session expire after 15 minutes
