@@ -1,6 +1,8 @@
 import os
 
 from django.utils.translation import gettext as _
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,9 +13,12 @@ class CompanyNIP(APIView):
     permission_classes = []
     authentication_classes = []
 
-    def get(self, request, nip, key):
+    key = openapi.Parameter('key', in_=openapi.IN_QUERY, type=openapi.TYPE_STRING, required=True)
+
+    @swagger_auto_schema(manual_parameters=[key])
+    def get(self, request, nip):
         api_key = os.getenv("API_KEY")
-        if key == api_key:
+        if request.GET.get('key') == api_key:
             ID = os.getenv("NIP_ID")
             KEY = os.getenv("NIP_KEY")
             nip24 = NIP24Client(id=ID, key=KEY)
