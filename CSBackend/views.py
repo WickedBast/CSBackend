@@ -11,9 +11,9 @@ class CompanyNIP(APIView):
     permission_classes = []
     authentication_classes = []
 
-    def get(self, request, nip, token):
-        api_token = os.getenv("API_KEY")
-        if token == api_token:
+    def get(self, request, nip, key):
+        api_key = os.getenv("API_KEY")
+        if key == api_key:
             ID = os.getenv("NIP_ID")
             KEY = os.getenv("NIP_KEY")
             nip24 = NIP24Client(id=ID, key=KEY)
