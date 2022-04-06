@@ -207,5 +207,6 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         fields = ('old_password', 'new_password', 'confirm_new_password')
 
 
+# FORGOT PASSWORD
 class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.CharField(write_only=True)
