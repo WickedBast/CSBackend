@@ -205,3 +205,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('old_password', 'new_password', 'confirm_new_password')
+
+
+# FORGOT PASSWORD
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.CharField(write_only=True)
