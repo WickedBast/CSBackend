@@ -146,8 +146,8 @@ class ForgotPasswordView(CreateAPIView):
     authentication_classes = []
 
     def post(self, request, *args, **kwargs):
-        current_site = get_current_site(request=request).domain
-
+        # current_site = get_current_site(request=request).domain
+        current_site = "54.38.139.134"
         token = requests.post(
             f"http://{current_site}/api/user/password_reset/",
             data={
