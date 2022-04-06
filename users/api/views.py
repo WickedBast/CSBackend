@@ -146,7 +146,7 @@ class ForgotPasswordView(CreateAPIView):
     authentication_classes = []
 
     def post(self, request, *args, **kwargs):
-        print("say hi")
+        Response({'Hello': 'Say Hi'}, status=status.HTTP_200_OK)
         # current_site = get_current_site(request=request).domain
         # current_site = "54.38.139.134"
         # token = requests.post(
