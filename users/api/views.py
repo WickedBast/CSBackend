@@ -146,34 +146,35 @@ class ForgotPasswordView(CreateAPIView):
     authentication_classes = []
 
     def post(self, request, *args, **kwargs):
+        print("say hi")
         # current_site = get_current_site(request=request).domain
-        current_site = "54.38.139.134"
-        token = requests.post(
-            f"http://{current_site}/api/user/password_reset/",
-            data={
-                "email": request.data.get("email")
-            }
-        )
-
-        if token.ok:
-            reset_password_token = ResetPasswordToken.objects.get(user=User.objects.get(email=request.data.get("email")))
-
-            try:
-                requests.post(
-                    "https://api.eu.mailgun.net/v3/cleanstock.eu/messages",
-                    auth=("api", os.getenv("MAILGUN_API_KEY")),
-                    data={"from": "Clean Stock Team <noreply@cleanstock.eu>",
-                          "to": reset_password_token.user.email,
-                          "subject": "Password Reset for Clean Stock Account",
-                          "template": "reset_password",
-                          "v:domain": current_site,
-                          "v:reset_password_url": "{}?token={}".format(
-                              reverse('password_reset:reset-password-confirm'),
-                              reset_password_token.key),
-                          }
-                )
-                return Response({'email': 'Email sent successfully'}, status=status.HTTP_200_OK)
-            except:
-                return Response({'error': 'Email Failed'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(token.json(), status=token.status_code)
+        # current_site = "54.38.139.134"
+        # token = requests.post(
+        #     f"http://{current_site}/api/user/password_reset/",
+        #     data={
+        #         "email": request.data.get("email")
+        #     }
+        # )
+        #
+        # if token.ok:
+        #     reset_password_token = ResetPasswordToken.objects.get(user=User.objects.get(email=request.data.get("email")))
+        #
+        #     try:
+        #         requests.post(
+        #             "https://api.eu.mailgun.net/v3/cleanstock.eu/messages",
+        #             auth=("api", os.getenv("MAILGUN_API_KEY")),
+        #             data={"from": "Clean Stock Team <noreply@cleanstock.eu>",
+        #                   "to": reset_password_token.user.email,
+        #                   "subject": "Password Reset for Clean Stock Account",
+        #                   "template": "reset_password",
+        #                   "v:domain": current_site,
+        #                   "v:reset_password_url": "{}?token={}".format(
+        #                       reverse('password_reset:reset-password-confirm'),
+        #                       reset_password_token.key),
+        #                   }
+        #         )
+        #         return Response({'email': 'Email sent successfully'}, status=status.HTTP_200_OK)
+        #     except:
+        #         return Response({'error': 'Email Failed'}, status=status.HTTP_400_BAD_REQUEST)
+        # else:
+        #     return Response(token.json(), status=token.status_code)
