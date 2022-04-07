@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_api_key.models import APIKey
+from communities.models import Community
 
 
 class CompanyNIP(APIView):
@@ -13,7 +14,7 @@ class CompanyNIP(APIView):
 
     def get(self, request, nip):
         key = request.META["HTTP_X_API_KEY"].split()[0]
-        if APIKey.objects.get_from_key(key=key):
+        if APIKey.objects.get_from_key(key=key).name == "NIP":
             ID = os.getenv("NIP_ID")
             KEY = os.getenv("NIP_KEY")
             nip24 = NIP24Client(id=ID, key=KEY)
@@ -34,5 +35,21 @@ class CompanyNIP(APIView):
                 return Response(response, status=status.HTTP_200_OK)
             else:
                 return Response({"error": _("NIP not found")}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
+
+
+class MapZIP(APIView):
+    permission_classes = [HasAPIKey]
+    authentication_classes = []
+
+    def get(self, request, zip):
+        key = request.META["HTTP_X_API_KEY"].split()[0]
+        if APIKey.objects.get_from_key(key=key).name == "ZIP":
+            communities = Community.objects.filter(zip_code__istartswith=zip[:3]).values_list(
+                'id', 'name', 'zip_code', 'address', 'city'
+            )
+            return Response(communities, status=status.HTTP_202_ACCEPTED)
+
         else:
             return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
