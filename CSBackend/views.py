@@ -46,7 +46,7 @@ class MapZIP(APIView):
     def get(self, request, zip):
         key = request.META["HTTP_X_API_KEY"].split()[0]
         if APIKey.objects.get_from_key(key=key).name == "ZIP":
-            communities = Community.objects.filter(zip_code__istartswith=zip[:3]).values_list(
+            communities = Community.objects.filter(zip_code__istartswith=zip[:3]).values(
                 'id', 'name', 'zip_code', 'address', 'city'
             )
             return Response(communities, status=status.HTTP_202_ACCEPTED)
