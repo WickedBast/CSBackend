@@ -3,6 +3,7 @@ import os
 import requests
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
+from django.utils.translation import gettext as _
 from django_rest_passwordreset import models
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -42,23 +43,23 @@ class RegistrationSerializer(serializers.Serializer):
             email=validated_data["email"],
             types=validated_data["types"],
         )
-        # try:
-        if self.validateEmail(validated_data["email"]):
-            # Save the user
-            user.save()
+        try:
+            if self.validateEmail(validated_data["email"]):
+                # Save the user
+                user.save()
 
-            # Create the registration token
-            token = models.ResetPasswordToken.objects.create(user=user)
-            token.save()
+                # Create the registration token
+                token = models.ResetPasswordToken.objects.create(user=user)
+                token.save()
 
-            # Send the confirmation email
-            self.send_confirmation_email(user=user, token=token.key)
+                # Send the confirmation email
+                self.send_confirmation_email(user=user, token=token.key)
 
-            # Create the data model and link with the user
-            self.save_type(validated_data=validated_data, user=user)
+                # Create the data model and link with the user
+                self.save_type(validated_data=validated_data, user=user)
 
-        # except:
-        #     raise ValidationError({"email": [_("User already exists")]})
+        except:
+            raise ValidationError({"email": [_("User already exists")]})
 
         return user
 
