@@ -148,15 +148,6 @@ class ForgotPasswordView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         current_site = get_current_site(request=request).domain
 
-        try:
-            token = ResetPasswordToken.objects.create(user=User.objects.get(email=request.data.get("email")))
-            token.save()
-        except:
-            return Response({
-                "email": "We couldn't find an account associated with that email. Please try a different e-mail "
-                         "address. "
-            }, status=status.HTTP_400_BAD_REQUEST)
-
         reset_password_token = ResetPasswordToken.objects.get(user=User.objects.get(email=request.data.get("email")))
 
         try:
