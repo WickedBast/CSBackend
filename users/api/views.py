@@ -149,7 +149,7 @@ class ForgotPasswordView(CreateAPIView):
         current_site = get_current_site(request=request).domain
 
         try:
-            token = models.ResetPasswordToken.objects.create(user=User.objects.get(email=request.data.get("email")))
+            token = ResetPasswordToken.objects.create(user=User.objects.get(email=request.data.get("email")))
             token.save()
         except:
             return Response({
