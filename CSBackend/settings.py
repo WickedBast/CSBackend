@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_filters',
     'corsheaders',
+    'coverage',
 
     # LOCAL
     'users',
