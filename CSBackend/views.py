@@ -74,6 +74,8 @@ class MapZIP(APIView):
                 loc = location.json()
                 value = {
                     "name": community.name,
+                    "zip": community.zip_code,
+                    "city": community.city,
                     "lat": loc[0]["lat"],
                     "lon": loc[0]["lon"]
                 }
