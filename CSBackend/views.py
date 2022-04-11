@@ -1,10 +1,14 @@
+import json
+
+import requests
 from django.utils.translation import gettext as _
 from nip24 import *
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
 from rest_framework_api_key.models import APIKey
+from rest_framework_api_key.permissions import HasAPIKey
+
 from communities.models import Community
 
 
@@ -46,10 +50,34 @@ class MapZIP(APIView):
     def get(self, request, zip):
         key = request.META["HTTP_X_API_KEY"].split()[0]
         if APIKey.objects.get_from_key(key=key).name == "ZIP":
-            communities = Community.objects.filter(zip_code__istartswith=zip[:3]).values(
-                'id', 'name', 'zip_code', 'address', 'city'
-            )
-            return Response(communities, status=status.HTTP_202_ACCEPTED)
-
+            communities = Community.objects.filter(zip_code__istartswith=zip[:3]).all()
+            locations = []
+            for community in communities:
+                location = requests.get(url="https://nominatim.openstreetmap.org/?",
+                                        params={
+                                            "q": community.name,
+                                            "city": community.city,
+                                            "street": community.address,
+                                            "postalcode": community.zip_code,
+                                            "format": "json",
+                                            "limit": 1,
+                                        })
+                if location.text == "[]":
+                    location = requests.get(url="https://nominatim.openstreetmap.org/?",
+                                            params={
+                                                "city": community.city,
+                                                "street": community.address,
+                                                "postalcode": community.zip_code,
+                                                "format": "json",
+                                                "limit": 1,
+                                            })
+                loc = location.json()
+                value = {
+                    "name": community.name,
+                    "lat": loc[0]["lat"],
+                    "lon": loc[0]["lon"]
+                }
+                locations.append(value)
+            return Response(locations, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
