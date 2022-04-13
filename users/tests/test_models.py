@@ -8,7 +8,7 @@ from users.models import User
 class BaseTestUser(TestCase):
     def setUp(self) -> None:
         self.email = "user@gmail.com"
-        self.types = User.Types.INDIVIDUAL
+        self.types = "Individual"
         self.password = ""
 
         self.user = User.objects.create_user(email=self.email,
@@ -22,7 +22,7 @@ class BaseTestUser(TestCase):
 class BaseTestSuperUser(TestCase):
     def setUp(self) -> None:
         self.email = "superuser@gmail.com"
-        self.types = User.Types.INDIVIDUAL
+        self.types = "Individual"
         self.password = "admin123456"
 
         self.superuser = User.objects.create_superuser(email=self.email,
@@ -37,7 +37,7 @@ class UserModel(BaseTestUser):
     def setUp(self) -> None:
         super().setUp()
 
-    def test_create_user_without_password(self):
+    def test_create_user(self):
         self.assertTrue(isinstance(self.user, User))
 
         self.assertEqual(validate_email(self.user.email), None)
