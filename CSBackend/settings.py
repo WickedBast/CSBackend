@@ -80,11 +80,11 @@ TEMPLATES = [
 AUTH_USER_MODEL = 'users.User'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000/', '*'
+    'http://localhost:3000/', 'http://localhost:3001/', '*'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000/', '*'
+    'http://localhost:3000/', 'http://localhost:3001/', '*'
 ]
 
 WSGI_APPLICATION = 'CSBackend.wsgi.application'
