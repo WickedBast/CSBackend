@@ -15,6 +15,8 @@ class BaseTestUser(TestCase):
                                              types=self.types,
                                              password=self.password)
 
+        self.user.save()
+
     def tearDown(self) -> None:
         self.user.delete()
 
@@ -29,14 +31,13 @@ class BaseTestSuperUser(TestCase):
                                                        types=self.types,
                                                        password=self.password)
 
+        self.superuser.save()
+
     def tearDown(self) -> None:
         self.superuser.delete()
 
 
 class UserModel(BaseTestUser):
-    def setUp(self) -> None:
-        super().setUp()
-
     def test_create_user(self):
         self.assertTrue(isinstance(self.user, User))
 
@@ -50,14 +51,14 @@ class UserModel(BaseTestUser):
 
         self.assertEqual(validate_password(self.user.password), None)
 
-    def tearDown(self) -> None:
-        super().tearDown()
+    def test_user_functions(self):
+        self.assertEqual(self.user.__str__(), self.user.email)
+        self.assertEqual(self.user.__str__(), "user@gmail.com")
+        self.assertEqual(self.user.has_perm("register"), self.user.is_admin)
+        self.assertTrue(self.user.has_module_perms("CleanStock"))
 
 
 class SuperUserModel(BaseTestSuperUser):
-    def setUp(self) -> None:
-        super().setUp()
-
     def test_create_superuser(self):
         self.assertTrue(isinstance(self.superuser, User))
 
@@ -69,18 +70,8 @@ class SuperUserModel(BaseTestSuperUser):
         self.assertEqual(self.superuser.is_admin, True)
         self.assertEqual(self.superuser.is_superuser, True)
 
-    def tearDown(self) -> None:
-        super().tearDown()
-
-
-class UserFunctions(BaseTestUser):
-    def setUp(self) -> None:
-        super().setUp()
-
-    def test_user_functions(self):
-        self.assertEqual(self.user.__str__(), self.user.email)
-        self.assertEqual(self.user.has_perm("register"), self.user.is_admin)
-        self.assertTrue(self.user.has_module_perms("CleanStock"))
-
-    def tearDown(self) -> None:
-        super().tearDown()
+    def test_superuser_functions(self):
+        self.assertEqual(self.superuser.__str__(), self.superuser.email)
+        self.assertEqual(self.superuser.__str__(), "superuser@gmail.com")
+        self.assertEqual(self.superuser.has_perm("register"), self.superuser.is_admin)
+        self.assertTrue(self.superuser.has_module_perms("CleanStock"))
