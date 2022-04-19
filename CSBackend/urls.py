@@ -28,7 +28,7 @@ urlpatterns = [
     path('api/member/', include('members.api.urls')),
     path('api/community/', include('communities.api.urls')),
     path('api/partner/', include('partners.api.urls')),
-    path('api/nip/<nip>', views.CompanyNIP.as_view()),
+    path('api/nip/', views.CompanyNIP.as_view()),
     path('api/zip/', views.MapZIP.as_view()),
 
     # PASSWORD RESET
