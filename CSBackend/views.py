@@ -64,6 +64,16 @@ class MapZIP(APIView):
         except:
             return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
 
+        is_empty = requests.get(url="https://nominatim.openstreetmap.org/?",
+                                params={
+                                    "postalcode": data["zip"],
+                                    "format": "json",
+                                    "limit": 1,
+                                })
+
+        if is_empty.text == "[]":
+            return Response({"error": _("Invalid ZIP")}, status=status.HTTP_400_BAD_REQUEST)
+
         communities = Community.objects.filter(zip_code__istartswith=data["zip"][:3]).all()
         locations = []
         for community in communities:
@@ -94,4 +104,8 @@ class MapZIP(APIView):
                 "lon": loc[0]["lon"]
             }
             locations.append(value)
+
+        if len(locations) == 0:
+            return Response({"warning:": _("No communities in this ZIP")}, status=status.HTTP_202_ACCEPTED)
+
         return Response(locations, status=status.HTTP_202_ACCEPTED)
