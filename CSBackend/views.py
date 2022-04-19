@@ -48,38 +48,38 @@ class MapZIP(APIView):
     authentication_classes = []
 
     def get(self, request, zip):
-        #key = request.META["HTTP_X_API_KEY"].split()[0]
-        #if APIKey.objects.get_from_key(key=key).name == "ZIP":
-        communities = Community.objects.filter(zip_code__istartswith=zip[:3]).all()
-        locations = []
-        for community in communities:
-            location = requests.get(url="https://nominatim.openstreetmap.org/?",
-                                    params={
-                                        "q": community.name,
-                                        "city": community.city,
-                                        "street": community.address,
-                                        "postalcode": community.zip_code,
-                                        "format": "json",
-                                        "limit": 1,
-                                    })
-            if location.text == "[]":
+        key = request.META["HTTP_X_API_KEY"].split()[0]
+        if APIKey.objects.get_from_key(key=key).name == "ZIP":
+            communities = Community.objects.filter(zip_code__istartswith=zip[:3]).all()
+            locations = []
+            for community in communities:
                 location = requests.get(url="https://nominatim.openstreetmap.org/?",
                                         params={
+                                            "q": community.name,
                                             "city": community.city,
                                             "street": community.address,
                                             "postalcode": community.zip_code,
                                             "format": "json",
                                             "limit": 1,
                                         })
-            loc = location.json()
-            value = {
-                "name": community.name,
-                "zip": community.zip_code,
-                "city": community.city,
-                "lat": loc[0]["lat"],
-                "lon": loc[0]["lon"]
-            }
-            locations.append(value)
-        return Response(locations, status=status.HTTP_202_ACCEPTED)
-        #else:
-        #    return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
+                if location.text == "[]":
+                    location = requests.get(url="https://nominatim.openstreetmap.org/?",
+                                            params={
+                                                "city": community.city,
+                                                "street": community.address,
+                                                "postalcode": community.zip_code,
+                                                "format": "json",
+                                                "limit": 1,
+                                            })
+                loc = location.json()
+                value = {
+                    "name": community.name,
+                    "zip": community.zip_code,
+                    "city": community.city,
+                    "lat": loc[0]["lat"],
+                    "lon": loc[0]["lon"]
+                }
+                locations.append(value)
+            return Response(locations, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
