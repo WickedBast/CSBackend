@@ -216,6 +216,8 @@ class TokenView(OAuth2TokenView):
         response = super().post(request, args, kwargs)
         d = json.loads(response.content.decode('utf8'))
         d['is_member'] = False
+        d['is_individual'] = False
+        d['is_company'] = False
         d['is_prospect'] = False
         d['is_school'] = False
         d['is_prosument'] = False
@@ -237,6 +239,12 @@ class TokenView(OAuth2TokenView):
 
             if isinstance(member_user, MemberUsers):
                 d['is_member'] = True
+
+                try:
+                    member_user.member.get_full_name()
+                    d['is_individual'] = True
+                except:
+                    d['is_company'] = True
 
                 if member_user.member.type == Member.Types.PROSPECT.name:
                     d['is_prospect'] = True
