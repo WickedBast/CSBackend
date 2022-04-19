@@ -188,7 +188,7 @@ class TokenView(OAuth2TokenView):
     @method_decorator(sensitive_post_parameters("password"))
     def post(self, request, *args, **kwargs):
         try:
-            u = User.objects.get(email=request.POST['email'])
+            u = User.objects.get(email=request.POST['username'])
             if not u.is_active:
                 return JsonResponse(
                     status=403,
@@ -232,44 +232,55 @@ class TokenView(OAuth2TokenView):
         d['is_service_provider'] = False
         d['is_energy_company'] = False
 
-        member_user = MemberUsers.objects.get(users=u)
-        partner_user = PartnerUsers.objects.get(users=u)
-        community_user = CommunityUsers.objects.get(users=u)
+        if MemberUsers.objects.filter(users=u).exists():
+            member_user = MemberUsers.objects.get(users=u)
 
-        if isinstance(member_user, MemberUsers):
-            d['is_member'] = True
+            if isinstance(member_user, MemberUsers):
+                d['is_member'] = True
 
-            if member_user.member.type == Member.Types.PROSPECT.name:
-                d['is_prospect'] = True
-            elif member_user.member.type == Member.Types.SCHOOL.name:
-                d['is_school'] = True
-            elif member_user.member.type == Member.Types.PROSPECT.name:
-                d['is_prosument'] = True
-            elif member_user.member.type == Member.Types.BENEFICIARY.name:
-                d['is_beneficiary'] = True
+                if member_user.member.type == Member.Types.PROSPECT.name:
+                    d['is_prospect'] = True
+                elif member_user.member.type == Member.Types.SCHOOL.name:
+                    d['is_school'] = True
+                elif member_user.member.type == Member.Types.PROSPECT.name:
+                    d['is_prosument'] = True
+                elif member_user.member.type == Member.Types.BENEFICIARY.name:
+                    d['is_beneficiary'] = True
 
-        if isinstance(partner_user, PartnerUsers):
-            d['is_partner'] = True
+        elif CommunityUsers.objects.filter(users=u).exists():
+            community_user = CommunityUsers.objects.get(users=u)
 
-            if partner_user.partner.type == Partner.Types.LOCAL.name:
-                d['is_local'] = True
-            elif partner_user.partner.type == Partner.Types.CLEANSTOCK.name:
-                d['is_cleanstock'] = True
+            if isinstance(community_user, CommunityUsers):
+                d['is_community'] = True
 
-            if partner_user.partner.partner_type == Partner.PartnerTypes.SERVICE_PROVIDER.name:
-                d['is_service_provider'] = True
-            elif partner_user.partner.partner_type == Partner.PartnerTypes.BANK.name:
-                d['is_bank'] = True
-            elif partner_user.partner.partner_type == Partner.PartnerTypes.ENERGY_COMPANY.name:
-                d['is_energy_company'] = True
+                if community_user.community.type == Community.Types.COOPERATIVE.name:
+                    d['is_cooperative'] = True
+                elif community_user.community.type == Community.Types.MUNICIPALITY.name:
+                    d['is_municipality'] = True
 
-        if isinstance(community_user, CommunityUsers):
-            d['is_community'] = True
+        elif PartnerUsers.objects.filter(users=u).exists():
+            partner_user = PartnerUsers.objects.get(users=u)
 
-            if community_user.community.type == Community.Types.COOPERATIVE.name:
-                d['is_cooperative'] = True
-            elif community_user.community.type == Community.Types.MUNICIPALITY.name:
-                d['is_municipality'] = True
+            if isinstance(partner_user, PartnerUsers):
+                d['is_partner'] = True
+
+                if partner_user.partner.type == Partner.Types.LOCAL.name:
+                    d['is_local'] = True
+                elif partner_user.partner.type == Partner.Types.CLEANSTOCK.name:
+                    d['is_cleanstock'] = True
+
+                if partner_user.partner.partner_type == Partner.PartnerTypes.SERVICE_PROVIDER.name:
+                    d['is_service_provider'] = True
+                elif partner_user.partner.partner_type == Partner.PartnerTypes.BANK.name:
+                    d['is_bank'] = True
+                elif partner_user.partner.partner_type == Partner.PartnerTypes.ENERGY_COMPANY.name:
+                    d['is_energy_company'] = True
+        else:
+            return JsonResponse(
+                status=403,
+                data={"message": _("Invalid credentials given.")},
+                safe=False
+            )
 
         response.content = json.dumps(d)
 
