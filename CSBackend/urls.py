@@ -29,7 +29,7 @@ urlpatterns = [
     path('api/community/', include('communities.api.urls')),
     path('api/partner/', include('partners.api.urls')),
     path('api/nip/<nip>', views.CompanyNIP.as_view()),
-    path('api/zip/<zip>', views.MapZIP.as_view()),
+    path('api/zip/', views.MapZIP.as_view()),
 
     # PASSWORD RESET
     path('api/user/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
