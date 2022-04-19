@@ -218,23 +218,8 @@ class TokenView(OAuth2TokenView):
         if response.status_code == 200:
             d = json.loads(response.content.decode('utf8'))
             d['is_member'] = False
-            d['is_individual'] = False
-            d['is_company'] = False
-            d['is_prospect'] = False
-            d['is_school'] = False
-            d['is_prosument'] = False
-            d['is_beneficiary'] = False
-
             d['is_community'] = False
-            d['is_cooperative'] = False
-            d['is_municipality'] = False
-
             d['is_partner'] = False
-            d['is_local'] = False
-            d['is_cleanstock'] = False
-            d['is_bank'] = False
-            d['is_service_provider'] = False
-            d['is_energy_company'] = False
 
             if MemberUsers.objects.filter(users=u).exists():
                 member_user = MemberUsers.objects.get(users=u)
@@ -242,49 +227,17 @@ class TokenView(OAuth2TokenView):
                 if isinstance(member_user, MemberUsers):
                     d['is_member'] = True
 
-                    try:
-                        member_user.member.get_full_name()
-                        d['is_individual'] = True
-                    except:
-                        d['is_company'] = True
-
-                    if member_user.member.type == Member.Types.PROSPECT.name:
-                        d['is_prospect'] = True
-                    elif member_user.member.type == Member.Types.SCHOOL.name:
-                        d['is_school'] = True
-                    elif member_user.member.type == Member.Types.PROSPECT.name:
-                        d['is_prosument'] = True
-                    elif member_user.member.type == Member.Types.BENEFICIARY.name:
-                        d['is_beneficiary'] = True
-
             elif CommunityUsers.objects.filter(users=u).exists():
                 community_user = CommunityUsers.objects.get(users=u)
 
                 if isinstance(community_user, CommunityUsers):
                     d['is_community'] = True
 
-                    if community_user.community.type == Community.Types.COOPERATIVE.name:
-                        d['is_cooperative'] = True
-                    elif community_user.community.type == Community.Types.MUNICIPALITY.name:
-                        d['is_municipality'] = True
-
             elif PartnerUsers.objects.filter(users=u).exists():
                 partner_user = PartnerUsers.objects.get(users=u)
 
                 if isinstance(partner_user, PartnerUsers):
                     d['is_partner'] = True
-
-                    if partner_user.partner.type == Partner.Types.LOCAL.name:
-                        d['is_local'] = True
-                    elif partner_user.partner.type == Partner.Types.CLEANSTOCK.name:
-                        d['is_cleanstock'] = True
-
-                    if partner_user.partner.partner_type == Partner.PartnerTypes.SERVICE_PROVIDER.name:
-                        d['is_service_provider'] = True
-                    elif partner_user.partner.partner_type == Partner.PartnerTypes.BANK.name:
-                        d['is_bank'] = True
-                    elif partner_user.partner.partner_type == Partner.PartnerTypes.ENERGY_COMPANY.name:
-                        d['is_energy_company'] = True
 
             else:
                 return JsonResponse(
