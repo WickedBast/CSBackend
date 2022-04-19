@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'communities',
     'members',
     'partners',
+    'settings',
 ]
 
 MIDDLEWARE = [
