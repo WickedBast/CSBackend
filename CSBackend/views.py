@@ -5,41 +5,47 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.models import APIKey
-from rest_framework_api_key.permissions import HasAPIKey
 
-from CSBackend.serializers import ZIPSerializer
+from CSBackend.serializers import ZIPSerializer, NIPSerializer
 from communities.models import Community
 
 
 class CompanyNIP(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     authentication_classes = []
+    serializer_class = NIPSerializer
 
-    def get(self, request, nip):
-        key = request.META["HTTP_X_API_KEY"].split()[0]
-        if APIKey.objects.get_from_key(key=key).name == "NIP":
-            ID = os.getenv("NIP_ID")
-            KEY = os.getenv("NIP_KEY")
-            nip24 = NIP24Client(id=ID, key=KEY)
-            data = nip24.getAllDataExt(Number.NIP, nip)
-
-            if data:
-                response = {
-                    "company_name": data.name,
-                    "nip": data.nip,
-                    "street": data.street,
-                    "streetNumber": data.streetNumber,
-                    "houseNumber": data.houseNumber,
-                    "city": data.city,
-                    "postCode": data.postCode,
-                    "postCity": data.postCity,
-                    "regon": data.regon,
-                }
-                return Response(response, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": _("NIP not found")}, status=status.HTTP_404_NOT_FOUND)
-        else:
+    def post(self, request):
+        data = request.data
+        try:
+            api = APIKey.objects.get_from_key(key=data["api_key"]).name == "NIP"
+            if not api:
+                raise Error
+        except APIKey.DoesNotExist:
+            return Response({"error:": _("API Key Does not Exist")}, status=status.HTTP_400_BAD_REQUEST)
+        except:
             return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
+
+        ID = os.getenv("NIP_ID")
+        KEY = os.getenv("NIP_KEY")
+        nip24 = NIP24Client(id=ID, key=KEY)
+        data = nip24.getAllDataExt(Number.NIP, data["nip"])
+
+        if data:
+            response = {
+                "company_name": data.name,
+                "nip": data.nip,
+                "street": data.street,
+                "streetNumber": data.streetNumber,
+                "houseNumber": data.houseNumber,
+                "city": data.city,
+                "postCode": data.postCode,
+                "postCity": data.postCity,
+                "regon": data.regon,
+            }
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": _("NIP not found")}, status=status.HTTP_404_NOT_FOUND)
 
 
 class MapZIP(APIView):
@@ -50,8 +56,12 @@ class MapZIP(APIView):
     def post(self, request):
         data = request.data
         try:
-            APIKey.objects.get_from_key(key=data["api_key"])
+            api = APIKey.objects.get_from_key(key=data["api_key"]).name == "ZIP"
+            if not api:
+                raise Error
         except APIKey.DoesNotExist:
+            return Response({"error:": _("API Key Does not Exist")}, status=status.HTTP_400_BAD_REQUEST)
+        except:
             return Response({"error:": _("Wrong API Key")}, status=status.HTTP_403_FORBIDDEN)
 
         communities = Community.objects.filter(zip_code__istartswith=data["zip"][:3]).all()
