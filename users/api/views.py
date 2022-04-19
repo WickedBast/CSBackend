@@ -217,27 +217,32 @@ class TokenView(OAuth2TokenView):
 
         if response.status_code == 200:
             d = json.loads(response.content.decode('utf8'))
-            d['is_member'] = False
-            d['is_community'] = False
-            d['is_partner'] = False
 
             if MemberUsers.objects.filter(users=u).exists():
                 member_user = MemberUsers.objects.get(users=u)
 
                 if isinstance(member_user, MemberUsers):
-                    d['is_member'] = True
-
-            elif CommunityUsers.objects.filter(users=u).exists():
-                community_user = CommunityUsers.objects.get(users=u)
-
-                if isinstance(community_user, CommunityUsers):
-                    d['is_community'] = True
+                    try:  # INDIVIDUAL
+                        member_user.member.get_full_name()
+                        if member_user.member.type == Member.Types.PROSPECT.name:
+                            d['role'] = "Prospect"
+                        elif member_user.member.type == Member.Types.SCHOOL.name:
+                            d['role'] = "School"
+                        elif member_user.member.type == Member.Types.PROSUMENT.name:
+                            d['role'] = "Prosumer"
+                        elif member_user.member.type == Member.Types.BENEFICIARY.name:
+                            d['role'] = "Beneficiary"
+                    except:  # ORGANIZATION
+                        d['role'] = "OrganizationsCooperatives"
 
             elif PartnerUsers.objects.filter(users=u).exists():
                 partner_user = PartnerUsers.objects.get(users=u)
 
                 if isinstance(partner_user, PartnerUsers):
-                    d['is_partner'] = True
+                    d['role'] = "Partner"
+
+            elif u.is_superuser and u.is_staff:
+                d['role'] = "Admin"
 
             else:
                 return JsonResponse(
