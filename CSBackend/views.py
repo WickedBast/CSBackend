@@ -106,6 +106,6 @@ class MapZIP(APIView):
             locations.append(value)
 
         if len(locations) == 0:
-            return Response({"warning:": _("No communities in this ZIP")}, status=status.HTTP_202_ACCEPTED)
+            return Response({"warning": _("No communities in this ZIP")}, status=status.HTTP_202_ACCEPTED)
 
         return Response(locations, status=status.HTTP_202_ACCEPTED)
