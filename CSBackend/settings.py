@@ -176,3 +176,27 @@ API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Logs out the user after the browser is closed
 SESSION_COOKIE_AGE = 900  # Session expire after 15 minutes
 SESSION_SAVE_EVERY_REQUEST = True
+
+ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
