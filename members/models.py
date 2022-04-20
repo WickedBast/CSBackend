@@ -13,13 +13,13 @@ class Member(models.Model):
 
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
 
-    type = models.CharField(max_length=30, choices=Types.choices)
+    type = models.CharField(max_length=30, choices=Types.choices, blank=True, null=True)
     first_name = models.CharField(max_length=50, verbose_name="first name", blank=True, null=True)
     last_name = models.CharField(max_length=50, verbose_name="last name", blank=True, null=True)
     organization_name = models.CharField(max_length=70, verbose_name="organization name", blank=True, null=True)
     nip_number = models.CharField(max_length=10, verbose_name="nip number", blank=True, null=True)
-    phone_number = models.CharField(max_length=20, verbose_name="phone number")
-    zip_code = models.CharField(max_length=10, verbose_name="zip code")
+    phone_number = models.CharField(max_length=20, verbose_name="phone number", blank=True, null=True)
+    zip_code = models.CharField(max_length=10, verbose_name="zip code", blank=True, null=True)
     address = models.CharField(max_length=100, verbose_name="address", blank=True, null=True)
     city = models.CharField(max_length=30, verbose_name="city", blank=True, null=True)
 
