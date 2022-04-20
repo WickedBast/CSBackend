@@ -1,7 +1,10 @@
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
+
+from communities.api import serializers
 from communities.api.serializers import CommunityCreationSerializer
+from communities.models import Community
 
 
 class CommunityCreationView(CreateAPIView):
@@ -23,3 +26,12 @@ class CommunityCreationView(CreateAPIView):
             return Response({
                 "response": "Something went wrong!"
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateDataView(RetrieveUpdateAPIView):
+    serializer_class = serializers.CommunityCreationSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def get_queryset(self):
+        return Community.objects.all()

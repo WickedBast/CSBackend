@@ -17,13 +17,13 @@ class Partner(models.Model):
 
     communities = models.ManyToManyField(Community, blank=True)
 
-    type = models.CharField(_('Types'), max_length=30, choices=Types.choices)
+    type = models.CharField(_('Types'), max_length=30, choices=Types.choices, blank=True, null=True)
     partner_type = models.CharField(_('Partner_Types'), max_length=30, choices=PartnerTypes.choices, blank=True,
                                     null=True)
-    name = models.CharField(max_length=70, verbose_name="name")
-    phone_number = models.CharField(max_length=20, verbose_name="phone number")
+    name = models.CharField(max_length=70, verbose_name="name", blank=True, null=True)
+    phone_number = models.CharField(max_length=20, verbose_name="phone number", blank=True, null=True)
     nip_number = models.CharField(max_length=20, verbose_name="nip number", blank=True, null=True)
-    zip_code = models.CharField(max_length=20, verbose_name="zip code")
+    zip_code = models.CharField(max_length=20, verbose_name="zip code", blank=True, null=True)
     address = models.CharField(max_length=100, verbose_name="address", blank=True, null=True)
     city = models.CharField(max_length=30, verbose_name="city", blank=True, null=True)
 

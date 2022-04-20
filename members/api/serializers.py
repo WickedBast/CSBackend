@@ -50,10 +50,3 @@ class MemberCreationSerializer(serializers.ModelSerializer):
             )
             member.save()
             return member
-
-
-class DashboardSerializer(serializers.Serializer):
-    displayName = serializers.SerializerMethodField(read_only=True)
-
-    def get_displayName(self, obj):
-        return self.context["request"].member.get_full_name()

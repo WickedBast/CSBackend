@@ -1,7 +1,10 @@
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
+
+from partners.api import serializers
 from partners.api.serializers import PartnerCreationSerializer
+from partners.models import Partner
 
 
 class PartnerCreationView(CreateAPIView):
@@ -23,3 +26,12 @@ class PartnerCreationView(CreateAPIView):
             return Response({
                 "response": "Something went wrong!"
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateDataView(RetrieveUpdateAPIView):
+    serializer_class = serializers.PartnerCreationSerializer
+    permission_classes = []
+    authentication_classes = []
+
+    def get_queryset(self):
+        return Partner.objects.all()
