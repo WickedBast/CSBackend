@@ -1,9 +1,9 @@
 from rest_framework import status
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+
 from members.api import serializers
 from members.models import Member
-from CSBackend.utils import OIsAuthenticated
 
 
 class MemberCreationView(CreateAPIView):
@@ -26,9 +26,10 @@ class MemberCreationView(CreateAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class DashboardView(RetrieveAPIView):
-    permission_classes = [OIsAuthenticated]
-    serializer_class = serializers.DashboardSerializer
+class UpdateDataView(RetrieveUpdateAPIView):
+    serializer_class = serializers.MemberCreationSerializer
+    permission_classes = []
+    authentication_classes = []
 
-    def get_object(self):
-        return self.serializer_class.get_displayName()
+    def get_queryset(self):
+        return Member.objects.all()
