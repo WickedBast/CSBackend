@@ -1,9 +1,9 @@
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
-from communities.api.serializers import CommunityCreationSerializer
 
 from communities.api import serializers
+from communities.api.serializers import CommunityCreationSerializer
 from communities.models import Community
 
 
