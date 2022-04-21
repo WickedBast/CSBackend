@@ -128,7 +128,7 @@ class RegistrationSerializer(serializers.Serializer):
                 nip_number=validated_data["nip_number"],
                 energy_tariff=validated_data["taxNumber"]
             )
-            if validated_data["havePV"]:
+            if str(validated_data["havePV"]) == "true":
                 member.pv_technology = validated_data["technology"]
                 member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
                 member.system_loss = validated_data["systemLoss"]
