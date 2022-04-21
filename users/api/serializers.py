@@ -30,14 +30,14 @@ class RegistrationSerializer(serializers.Serializer):
     first_name = serializers.CharField(write_only=True, required=False)
     last_name = serializers.CharField(write_only=True, required=False)
 
-    havePV = serializers.BooleanField(write_only=True, required=False)
-    taxNumber = serializers.CharField(write_only=True, required=False)
-    technology = serializers.CharField(write_only=True, required=False)
-    installedPeakPVPower = serializers.CharField(write_only=True, required=False)
-    systemLoss = serializers.CharField(write_only=True, required=False)
-    mountingPosition = serializers.CharField(write_only=True, required=False)
-    slope = serializers.CharField(write_only=True, required=False)
-    azimuth = serializers.CharField(write_only=True, required=False)
+    # havePV = serializers.BooleanField(write_only=True, required=False)
+    # taxNumber = serializers.CharField(write_only=True, required=False)
+    # technology = serializers.CharField(write_only=True, required=False)
+    # installedPeakPVPower = serializers.CharField(write_only=True, required=False)
+    # systemLoss = serializers.CharField(write_only=True, required=False)
+    # mountingPosition = serializers.CharField(write_only=True, required=False)
+    # slope = serializers.CharField(write_only=True, required=False)
+    # azimuth = serializers.CharField(write_only=True, required=False)
 
     def create(self, validated_data):
         user = User(
@@ -102,13 +102,13 @@ class RegistrationSerializer(serializers.Serializer):
                 last_name=validated_data["last_name"],
                 energy_tariff=validated_data["taxNumber"]
             )
-            if validated_data["havePV"]:
-                member.pv_technology = validated_data["technology"]
-                member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
-                member.system_loss = validated_data["systemLoss"]
-                member.mounting_position = validated_data["mountingPosition"]
-                member.slope = validated_data["slope"]
-                member.azimuth = validated_data["azimuth"]
+            # if validated_data["havePV"]:
+            #     member.pv_technology = validated_data["technology"]
+            #     member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+            #     member.system_loss = validated_data["systemLoss"]
+            #     member.mounting_position = validated_data["mountingPosition"]
+            #     member.slope = validated_data["slope"]
+            #     member.azimuth = validated_data["azimuth"]
 
             member.save()
 
@@ -128,13 +128,13 @@ class RegistrationSerializer(serializers.Serializer):
                 nip_number=validated_data["nip_number"],
                 energy_tariff=validated_data["taxNumber"]
             )
-            if validated_data["havePV"]:
-                member.pv_technology = validated_data["technology"]
-                member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
-                member.system_loss = validated_data["systemLoss"]
-                member.mounting_position = validated_data["mountingPosition"]
-                member.slope = validated_data["slope"]
-                member.azimuth = validated_data["azimuth"]
+            # if validated_data["havePV"]:
+            #     member.pv_technology = validated_data["technology"]
+            #     member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+            #     member.system_loss = validated_data["systemLoss"]
+            #     member.mounting_position = validated_data["mountingPosition"]
+            #     member.slope = validated_data["slope"]
+            #     member.azimuth = validated_data["azimuth"]
 
             member.save()
 
@@ -155,13 +155,13 @@ class RegistrationSerializer(serializers.Serializer):
                 city=validated_data["city"],
                 energy_tariff=validated_data["taxNumber"]
             )
-            if validated_data["havePV"]:
-                partner.pv_technology = validated_data["technology"]
-                partner.pv_power_peak_installed = validated_data["installedPeakPVPower"]
-                partner.system_loss = validated_data["systemLoss"]
-                partner.mounting_position = validated_data["mountingPosition"]
-                partner.slope = validated_data["slope"]
-                partner.azimuth = validated_data["azimuth"]
+            # if validated_data["havePV"]:
+            #     partner.pv_technology = validated_data["technology"]
+            #     partner.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+            #     partner.system_loss = validated_data["systemLoss"]
+            #     partner.mounting_position = validated_data["mountingPosition"]
+            #     partner.slope = validated_data["slope"]
+            #     partner.azimuth = validated_data["azimuth"]
 
             partner.save()
 
@@ -180,13 +180,13 @@ class RegistrationSerializer(serializers.Serializer):
                 city=validated_data["city"],
                 energy_tariff=validated_data["taxNumber"]
             )
-            if validated_data["havePV"]:
-                community.pv_technology = validated_data["technology"]
-                community.pv_power_peak_installed = validated_data["installedPeakPVPower"]
-                community.system_loss = validated_data["systemLoss"]
-                community.mounting_position = validated_data["mountingPosition"]
-                community.slope = validated_data["slope"]
-                community.azimuth = validated_data["azimuth"]
+            # if validated_data["havePV"]:
+            #     community.pv_technology = validated_data["technology"]
+            #     community.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+            #     community.system_loss = validated_data["systemLoss"]
+            #     community.mounting_position = validated_data["mountingPosition"]
+            #     community.slope = validated_data["slope"]
+            #     community.azimuth = validated_data["azimuth"]
 
             community.save()
 
