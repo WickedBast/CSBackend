@@ -100,7 +100,7 @@ class RegistrationSerializer(serializers.Serializer):
                 city=validated_data["city"],
                 first_name=validated_data["first_name"],
                 last_name=validated_data["last_name"],
-                energy_tariff=validated_data["taxNumber"],
+                energy_tariff=validated_data["taxNumber"]
             )
             if validated_data["havePV"]:
                 member.pv_technology = validated_data["technology"]
@@ -126,7 +126,7 @@ class RegistrationSerializer(serializers.Serializer):
                 city=validated_data["city"],
                 organization_name=validated_data["companyName"],
                 nip_number=validated_data["nip_number"],
-                energy_tariff=validated_data["taxNumber"],
+                energy_tariff=validated_data["taxNumber"]
             )
             if validated_data["havePV"]:
                 member.pv_technology = validated_data["technology"]
@@ -153,7 +153,7 @@ class RegistrationSerializer(serializers.Serializer):
                 zip_code=validated_data["zip_code"],
                 address=validated_data["address"],
                 city=validated_data["city"],
-                energy_tariff=validated_data["taxNumber"],
+                energy_tariff=validated_data["taxNumber"]
             )
             if validated_data["havePV"]:
                 partner.pv_technology = validated_data["technology"]
@@ -178,7 +178,7 @@ class RegistrationSerializer(serializers.Serializer):
                 phone_number=validated_data["phone_number"],
                 address=validated_data["address"],
                 city=validated_data["city"],
-                energy_tariff=validated_data["taxNumber"],
+                energy_tariff=validated_data["taxNumber"]
             )
             if validated_data["havePV"]:
                 community.pv_technology = validated_data["technology"]
