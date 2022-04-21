@@ -32,12 +32,12 @@ class RegistrationSerializer(serializers.Serializer):
     taxNumber = serializers.CharField(write_only=True, required=False)
     havePV = serializers.BooleanField(write_only=True, required=False)
 
-    technology = serializers.CharField(required=False)
-    installedPeakPVPower = serializers.CharField(required=False)
-    systemLoss = serializers.CharField(required=False)
-    mountingPosition = serializers.CharField(required=False)
-    slope = serializers.CharField(required=False)
-    azimuth = serializers.CharField(required=False)
+    technology = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    installedPeakPVPower = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    systemLoss = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    mountingPosition = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    slope = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    azimuth = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     def create(self, validated_data):
         user = User(
