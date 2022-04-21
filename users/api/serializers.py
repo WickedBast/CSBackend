@@ -77,7 +77,7 @@ class RegistrationSerializer(serializers.Serializer):
                   "to": user.email,
                   "subject": "Welcome to Clean Stock",
                   "template": "confirm_email",
-                  "v:domain": "54.38.139.134",
+                  "v:domain": "localhost:3000",
                   "v:token": f"{token}",
                   }
         )
