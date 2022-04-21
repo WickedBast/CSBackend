@@ -30,7 +30,7 @@ class RegistrationSerializer(serializers.Serializer):
     first_name = serializers.CharField(write_only=True, required=False)
     last_name = serializers.CharField(write_only=True, required=False)
 
-    havePV = serializers.CharField(write_only=True, required=False)
+    havePV = serializers.BooleanField(write_only=True, required=False)
     taxNumber = serializers.CharField(write_only=True, required=False)
     technology = serializers.CharField(write_only=True, required=False)
     installedPeakPVPower = serializers.CharField(write_only=True, required=False)
@@ -102,7 +102,7 @@ class RegistrationSerializer(serializers.Serializer):
                 last_name=validated_data["last_name"],
                 energy_tariff=validated_data["taxNumber"],
             )
-            if validated_data["havePV"] == "true":
+            if validated_data["havePV"]:
                 member.pv_technology = validated_data["technology"]
                 member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
                 member.system_loss = validated_data["systemLoss"]
@@ -128,7 +128,7 @@ class RegistrationSerializer(serializers.Serializer):
                 nip_number=validated_data["nip_number"],
                 energy_tariff=validated_data["taxNumber"],
             )
-            if validated_data["havePV"] == "true":
+            if validated_data["havePV"]:
                 member.pv_technology = validated_data["technology"]
                 member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
                 member.system_loss = validated_data["systemLoss"]
@@ -155,7 +155,7 @@ class RegistrationSerializer(serializers.Serializer):
                 city=validated_data["city"],
                 energy_tariff=validated_data["taxNumber"],
             )
-            if validated_data["havePV"] == "true":
+            if validated_data["havePV"]:
                 partner.pv_technology = validated_data["technology"]
                 partner.pv_power_peak_installed = validated_data["installedPeakPVPower"]
                 partner.system_loss = validated_data["systemLoss"]
@@ -180,7 +180,7 @@ class RegistrationSerializer(serializers.Serializer):
                 city=validated_data["city"],
                 energy_tariff=validated_data["taxNumber"],
             )
-            if validated_data["havePV"] == "true":
+            if validated_data["havePV"]:
                 community.pv_technology = validated_data["technology"]
                 community.pv_power_peak_installed = validated_data["installedPeakPVPower"]
                 community.system_loss = validated_data["systemLoss"]
