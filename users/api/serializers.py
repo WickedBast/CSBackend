@@ -196,7 +196,7 @@ class RegistrationSerializer(serializers.Serializer):
 
 
 class RegistrationPasswordSerializer(serializers.Serializer):
-    password = serializers.CharField(
+    newPassword = serializers.CharField(
         style={'input_type': 'password'}, write_only=True, validators=[validate_password], max_length=128, min_length=6
     )
     token = serializers.CharField()

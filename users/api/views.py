@@ -69,7 +69,7 @@ class RegistrationPasswordView(CreateAPIView):
         except (KeyError, ValueError, AttributeError):
             return Response({"data": ["Data is invalid"]}, status=status.HTTP_400_BAD_REQUEST)
 
-        password = data.get('password')
+        password = data.get('newPassword')
         token_value = data.get('token')
 
         if not password:
