@@ -44,28 +44,28 @@ class RegistrationSerializer(serializers.Serializer):
             email=validated_data["email"],
             types=validated_data["types"],
         )
-        try:
-            if self.validateEmail(validated_data["email"]):
-                # Save the user
-                user.save()
+        # try:
+        if self.validateEmail(validated_data["email"]):
+            # Save the user
+            user.save()
 
-                # Create the registration token
-                token = models.ResetPasswordToken.objects.create(user=user)
-                token.save()
+            # Create the registration token
+            token = models.ResetPasswordToken.objects.create(user=user)
+            token.save()
 
-                # Send the confirmation email
-                self.send_confirmation_email(user=user, token=token.key)
+            # Send the confirmation email
+            self.send_confirmation_email(user=user, token=token.key)
 
-                # Create the data model and link with the user
-                self.save_type(validated_data=validated_data, user=user)
+            # Create the data model and link with the user
+            self.save_type(validated_data=validated_data, user=user)
 
-        except:
-            try:
-                user.delete()
-                models.ResetPasswordToken.objects.get(user=user).delete()
-                raise ValidationError({"email": [_("User already exists")]})
-            except:
-                raise ValidationError({"email": [_("User already exists")]})
+        # except:
+        #     try:
+        #         user.delete()
+        #         models.ResetPasswordToken.objects.get(user=user).delete()
+        #         raise ValidationError({"email": [_("User already exists")]})
+        #     except:
+        #         raise ValidationError({"email": [_("User already exists")]})
 
         return user
 
