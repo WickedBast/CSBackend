@@ -128,13 +128,6 @@ class RegistrationSerializer(serializers.Serializer):
                 nip_number=validated_data["nip_number"],
                 energy_tariff=validated_data["taxNumber"]
             )
-            if validated_data["havePV"]:
-                member.pv_technology = validated_data["technology"]
-                member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
-                member.system_loss = validated_data["systemLoss"]
-                member.mounting_position = validated_data["mountingPosition"]
-                member.slope = validated_data["slope"]
-                member.azimuth = validated_data["azimuth"]
 
             member.save()
 
