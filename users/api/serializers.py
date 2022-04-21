@@ -24,17 +24,18 @@ class RegistrationSerializer(serializers.Serializer):
     city = serializers.CharField(write_only=True)
     zip_code = serializers.CharField(write_only=True)
     name = serializers.CharField(write_only=True, required=False)
-    organization_name = serializers.CharField(write_only=True, required=False)
+    companyName = serializers.CharField(write_only=True, required=False)
     nip_number = serializers.CharField(write_only=True, required=False)
     partner_type = serializers.CharField(write_only=True, required=False)
     first_name = serializers.CharField(write_only=True, required=False)
     last_name = serializers.CharField(write_only=True, required=False)
 
-    energy_tariff = serializers.CharField(write_only=True, required=False)
-    pv_technology = serializers.CharField(write_only=True, required=False)
-    pv_power_peak_installed = serializers.CharField(write_only=True, required=False)
-    system_loss = serializers.CharField(write_only=True, required=False)
-    mounting_position = serializers.CharField(write_only=True, required=False)
+    havePV = serializers.CharField(write_only=True, required=False)
+    taxNumber = serializers.CharField(write_only=True, required=False)
+    technology = serializers.CharField(write_only=True, required=False)
+    installedPeakPVPower = serializers.CharField(write_only=True, required=False)
+    systemLoss = serializers.CharField(write_only=True, required=False)
+    mountingPosition = serializers.CharField(write_only=True, required=False)
     slope = serializers.CharField(write_only=True, required=False)
     azimuth = serializers.CharField(write_only=True, required=False)
 
@@ -59,7 +60,12 @@ class RegistrationSerializer(serializers.Serializer):
                 self.save_type(validated_data=validated_data, user=user)
 
         except:
-            raise ValidationError({"email": [_("User already exists")]})
+            try:
+                user.delete()
+                models.ResetPasswordToken.objects.get(user=user).delete()
+                raise ValidationError({"email": [_("User already exists")]})
+            except:
+                raise ValidationError({"email": [_("User already exists")]})
 
         return user
 
@@ -71,7 +77,7 @@ class RegistrationSerializer(serializers.Serializer):
                   "to": user.email,
                   "subject": "Welcome to Clean Stock",
                   "template": "confirm_email",
-                  "v:domain": "127.0.0.1:7000",
+                  "v:domain": "54.38.139.134",
                   "v:token": f"{token}",
                   }
         )
@@ -94,14 +100,16 @@ class RegistrationSerializer(serializers.Serializer):
                 city=validated_data["city"],
                 first_name=validated_data["first_name"],
                 last_name=validated_data["last_name"],
-                energy_tariff=validated_data["energy_tariff"],
-                pv_technology=validated_data["pv_technology"],
-                pv_power_peak_installed=validated_data["pv_power_peak_installed"],
-                system_loss=validated_data["system_loss"],
-                mounting_position=validated_data["mounting_position"],
-                slope=validated_data["slope"],
-                azimuth=validated_data["azimuth"]
+                energy_tariff=validated_data["taxNumber"],
             )
+            if validated_data["havePV"] == "true":
+                member.pv_technology = validated_data["technology"]
+                member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+                member.system_loss = validated_data["systemLoss"]
+                member.mounting_position = validated_data["mountingPosition"]
+                member.slope = validated_data["slope"]
+                member.azimuth = validated_data["azimuth"]
+
             member.save()
 
             # Create the necessary data model's user to link with the actual user
@@ -116,16 +124,18 @@ class RegistrationSerializer(serializers.Serializer):
                 zip_code=validated_data["zip_code"],
                 address=validated_data["address"],
                 city=validated_data["city"],
-                organization_name=validated_data["organization_name"],
+                organization_name=validated_data["companyName"],
                 nip_number=validated_data["nip_number"],
-                energy_tariff=validated_data["energy_tariff"],
-                pv_technology=validated_data["pv_technology"],
-                pv_power_peak_installed=validated_data["pv_power_peak_installed"],
-                system_loss=validated_data["system_loss"],
-                mounting_position=validated_data["mounting_position"],
-                slope=validated_data["slope"],
-                azimuth=validated_data["azimuth"]
+                energy_tariff=validated_data["taxNumber"],
             )
+            if validated_data["havePV"] == "true":
+                member.pv_technology = validated_data["technology"]
+                member.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+                member.system_loss = validated_data["systemLoss"]
+                member.mounting_position = validated_data["mountingPosition"]
+                member.slope = validated_data["slope"]
+                member.azimuth = validated_data["azimuth"]
+
             member.save()
 
             # Create the necessary data model's user to link with the actual user
@@ -143,14 +153,16 @@ class RegistrationSerializer(serializers.Serializer):
                 zip_code=validated_data["zip_code"],
                 address=validated_data["address"],
                 city=validated_data["city"],
-                energy_tariff=validated_data["energy_tariff"],
-                pv_technology=validated_data["pv_technology"],
-                pv_power_peak_installed=validated_data["pv_power_peak_installed"],
-                system_loss=validated_data["system_loss"],
-                mounting_position=validated_data["mounting_position"],
-                slope=validated_data["slope"],
-                azimuth=validated_data["azimuth"]
+                energy_tariff=validated_data["taxNumber"],
             )
+            if validated_data["havePV"] == "true":
+                partner.pv_technology = validated_data["technology"]
+                partner.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+                partner.system_loss = validated_data["systemLoss"]
+                partner.mounting_position = validated_data["mountingPosition"]
+                partner.slope = validated_data["slope"]
+                partner.azimuth = validated_data["azimuth"]
+
             partner.save()
 
             # Create the necessary data model's user to link with the actual user
@@ -166,14 +178,16 @@ class RegistrationSerializer(serializers.Serializer):
                 phone_number=validated_data["phone_number"],
                 address=validated_data["address"],
                 city=validated_data["city"],
-                energy_tariff=validated_data["energy_tariff"],
-                pv_technology=validated_data["pv_technology"],
-                pv_power_peak_installed=validated_data["pv_power_peak_installed"],
-                system_loss=validated_data["system_loss"],
-                mounting_position=validated_data["mounting_position"],
-                slope=validated_data["slope"],
-                azimuth=validated_data["azimuth"]
+                energy_tariff=validated_data["taxNumber"],
             )
+            if validated_data["havePV"] == "true":
+                community.pv_technology = validated_data["technology"]
+                community.pv_power_peak_installed = validated_data["installedPeakPVPower"]
+                community.system_loss = validated_data["systemLoss"]
+                community.mounting_position = validated_data["mountingPosition"]
+                community.slope = validated_data["slope"]
+                community.azimuth = validated_data["azimuth"]
+
             community.save()
 
             # Create the necessary data model's user to link with the actual user
