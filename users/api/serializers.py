@@ -154,7 +154,7 @@ class RegistrationSerializer(serializers.Serializer):
             partner = Partner.objects.create(
                 type=validated_data["type"],
                 partner_type=validated_data["partner_type"],
-                name=validated_data["name"],
+                name=validated_data["companyName"],
                 phone_number=validated_data["phone_number"],
                 nip_number=validated_data["nip_number"],
                 zip_code=validated_data["zip_code"],
