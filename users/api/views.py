@@ -13,10 +13,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django_rest_passwordreset import models
 from django_rest_passwordreset.models import ResetPasswordToken
+from django_rest_passwordreset.views import ResetPasswordRequestToken
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from oauth2_provider.views.base import TokenView as OAuth2TokenView
-from django_rest_passwordreset.views import ResetPasswordRequestToken
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.generics import CreateAPIView, UpdateAPIView
@@ -24,9 +24,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from communities.models import Community, CommunityUsers
+from communities.models import CommunityUsers
 from members.models import Member, MemberUsers
-from partners.models import Partner, PartnerUsers
+from partners.models import PartnerUsers
 from users.api.serializers import (
     RegistrationSerializer,
     EmailVerificationSerializer,
@@ -69,7 +69,7 @@ class RegistrationPasswordView(CreateAPIView):
         except (KeyError, ValueError, AttributeError):
             return Response({"data": ["Data is invalid"]}, status=status.HTTP_400_BAD_REQUEST)
 
-        password = data.get('password')
+        password = data.get('newPassword')
         token_value = data.get('token')
 
         if not password:
@@ -151,6 +151,8 @@ class ChangePasswordView(UpdateAPIView):
 
 
 class ForgotPasswordView(ResetPasswordRequestToken):
+    permission_classes = []
+    authentication_classes = []
 
     def post(self, request, *args, **kwargs):
         resp = super().post(request=request, *args, **kwargs)
@@ -169,9 +171,9 @@ class ForgotPasswordView(ResetPasswordRequestToken):
                           "to": reset_password_token.user.email,
                           "subject": "Password Reset for Clean Stock Account",
                           "template": "reset_password",
-                          "v:domain": current_site,
+                          "v:domain": "localhost:3000",
                           "v:reset_password_url": "{}?token={}".format(
-                              reverse('password_reset:reset-password-confirm'),
+                              "/reset-password/",
                               reset_password_token.key),
                           }
                 )
