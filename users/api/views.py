@@ -173,7 +173,7 @@ class ForgotPasswordView(ResetPasswordRequestToken):
                           "template": "reset_password",
                           "v:domain": "localhost:3000",
                           "v:reset_password_url": "{}?token={}".format(
-                              "reset-password",
+                              "/reset-password/",
                               reset_password_token.key),
                           }
                 )
