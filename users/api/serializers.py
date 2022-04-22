@@ -46,8 +46,21 @@ class RegistrationSerializer(serializers.Serializer):
         )
         try:
             if self.validateEmail(validated_data["email"]):
+                # Create the data model
+                data_type = self.save_type(validated_data=validated_data)
+
                 # Save the user
                 user.save()
+
+                if validated_data["types"] == ("Individual" or "Company"):
+                    # Create the necessary data model's user to link with the actual user
+                    member_user = MemberUsers.objects.create(users=user, member=data_type)
+                    member_user.save()
+
+                elif validated_data["types"] == "Partner":
+                    # Create the necessary data model's user to link with the actual user
+                    partner_user = PartnerUsers.objects.create(users=user, partner=data_type)
+                    partner_user.save()
 
                 # Create the registration token
                 token = models.ResetPasswordToken.objects.create(user=user)
@@ -56,16 +69,14 @@ class RegistrationSerializer(serializers.Serializer):
                 # Send the confirmation email
                 self.send_confirmation_email(user=user, token=token.key)
 
-                # Create the data model and link with the user
-                self.save_type(validated_data=validated_data, user=user)
-
         except:
             try:
                 user.delete()
                 models.ResetPasswordToken.objects.get(user=user).delete()
-                raise ValidationError({"email": [_("User already exists")]})
             except:
-                raise ValidationError({"email": [_("User already exists")]})
+                pass
+
+            raise ValidationError({"email": [_("User already exists")]})
 
         return user
 
@@ -89,11 +100,11 @@ class RegistrationSerializer(serializers.Serializer):
         except ValidationError:
             return False
 
-    def save_type(self, validated_data, user):
-        if user.types == "Individual":
+    def save_type(self, validated_data):
+        if validated_data["types"] == "Individual":
             # Create the necessary data model
             member = Member.objects.create(
-                type=validated_data["type"],
+                type="Prospect",
                 phone_number=validated_data["phone_number"],
                 zip_code=validated_data["zip_code"],
                 address=validated_data["address"],
@@ -112,14 +123,12 @@ class RegistrationSerializer(serializers.Serializer):
 
             member.save()
 
-            # Create the necessary data model's user to link with the actual user
-            member_user = MemberUsers.objects.create(users=user, member=member)
-            member_user.save()
+            return member
 
-        elif user.types == "Company":
+        elif validated_data["types"] == "Company":
             # Create the necessary data model
             member = Member.objects.create(
-                type=validated_data["type"],
+                type="Prospect",
                 phone_number=validated_data["phone_number"],
                 zip_code=validated_data["zip_code"],
                 address=validated_data["address"],
@@ -138,14 +147,12 @@ class RegistrationSerializer(serializers.Serializer):
 
             member.save()
 
-            # Create the necessary data model's user to link with the actual user
-            member_user = MemberUsers.objects.create(users=user, member=member)
-            member_user.save()
+            return member
 
-        elif user.types == "Partner":
+        elif validated_data["types"] == "Partner":
             # Create the necessary data model
             partner = Partner.objects.create(
-                type=validated_data["type"],
+                type="CleanStock",
                 partner_type=validated_data["partner_type"],
                 name=validated_data["name"],
                 phone_number=validated_data["phone_number"],
@@ -165,34 +172,7 @@ class RegistrationSerializer(serializers.Serializer):
 
             partner.save()
 
-            # Create the necessary data model's user to link with the actual user
-            partner_user = PartnerUsers.objects.create(users=user, partner=partner)
-            partner_user.save()
-
-        elif user.types == "Community":
-            # Create the necessary data model
-            community = Community.objects.create(
-                type=validated_data["type"],
-                name=validated_data["name"],
-                zip_code=validated_data["zip_code"],
-                phone_number=validated_data["phone_number"],
-                address=validated_data["address"],
-                city=validated_data["city"],
-                energy_tariff=validated_data["taxNumber"]
-            )
-            if validated_data["havePV"]:
-                community.pv_technology = validated_data["technology"]
-                community.pv_power_peak_installed = validated_data["installedPeakPVPower"]
-                community.system_loss = validated_data["systemLoss"]
-                community.mounting_position = validated_data["mountingPosition"]
-                community.slope = validated_data["slope"]
-                community.azimuth = validated_data["azimuth"]
-
-            community.save()
-
-            # Create the necessary data model's user to link with the actual user
-            community_member = CommunityUsers.objects.create(users=user, community=community)
-            community_member.save()
+            return partner
 
 
 class RegistrationPasswordSerializer(serializers.Serializer):
