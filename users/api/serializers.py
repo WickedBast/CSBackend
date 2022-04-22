@@ -18,6 +18,7 @@ from users.models import User
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True, max_length=50)
     types = serializers.CharField(write_only=True)
+    type = serializers.CharField(write_only=True)
     phone_number = serializers.CharField(write_only=True)
     address = serializers.CharField(write_only=True)
     city = serializers.CharField(write_only=True)
@@ -103,6 +104,7 @@ class RegistrationSerializer(serializers.Serializer):
         if validated_data["types"] == "Individual":
             # Create the necessary data model
             member = Member.objects.create(
+                type=validated_data["type"],
                 phone_number=validated_data["phone_number"],
                 zip_code=validated_data["zip_code"],
                 address=validated_data["address"],
@@ -126,6 +128,7 @@ class RegistrationSerializer(serializers.Serializer):
         elif validated_data["types"] == "Company":
             # Create the necessary data model
             member = Member.objects.create(
+                type=validated_data["type"],
                 phone_number=validated_data["phone_number"],
                 zip_code=validated_data["zip_code"],
                 address=validated_data["address"],
@@ -149,6 +152,7 @@ class RegistrationSerializer(serializers.Serializer):
         elif validated_data["types"] == "Partner":
             # Create the necessary data model
             partner = Partner.objects.create(
+                type=validated_data["type"],
                 partner_type=validated_data["partner_type"],
                 name=validated_data["name"],
                 phone_number=validated_data["phone_number"],

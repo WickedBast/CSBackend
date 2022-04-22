@@ -13,7 +13,7 @@ class Member(models.Model):
 
     community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
 
-    type = models.CharField(max_length=30, choices=Types.choices, blank=True, null=True, default=Types.PROSPECT)
+    type = models.CharField(max_length=30, choices=Types.choices, blank=True, null=True)
     first_name = models.CharField(max_length=50, verbose_name="first name", blank=True, null=True)
     last_name = models.CharField(max_length=50, verbose_name="last name", blank=True, null=True)
     organization_name = models.CharField(max_length=70, verbose_name="organization name", blank=True, null=True)

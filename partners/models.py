@@ -17,7 +17,7 @@ class Partner(models.Model):
 
     communities = models.ManyToManyField(Community, blank=True)
 
-    type = models.CharField(_('Types'), max_length=30, choices=Types.choices, blank=True, null=True, default=Types.CLEANSTOCK)
+    type = models.CharField(_('Types'), max_length=30, choices=Types.choices, blank=True, null=True)
     partner_type = models.CharField(_('Partner_Types'), max_length=30, choices=PartnerTypes.choices, blank=True,
                                     null=True)
     name = models.CharField(max_length=70, verbose_name="name", blank=True, null=True)
