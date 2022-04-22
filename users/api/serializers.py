@@ -18,7 +18,6 @@ from users.models import User
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True, max_length=50)
     types = serializers.CharField(write_only=True)
-    type = serializers.CharField(write_only=True)
     phone_number = serializers.CharField(write_only=True)
     address = serializers.CharField(write_only=True)
     city = serializers.CharField(write_only=True)
