@@ -171,9 +171,9 @@ class ForgotPasswordView(ResetPasswordRequestToken):
                           "to": reset_password_token.user.email,
                           "subject": "Password Reset for Clean Stock Account",
                           "template": "reset_password",
-                          "v:domain": current_site,
+                          "v:domain": "localhost:3000",
                           "v:reset_password_url": "{}?token={}".format(
-                              reverse('password_reset:reset-password-confirm'),
+                              "reset-password",
                               reset_password_token.key),
                           }
                 )
