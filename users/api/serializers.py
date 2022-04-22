@@ -44,39 +44,39 @@ class RegistrationSerializer(serializers.Serializer):
             email=validated_data["email"],
             types=validated_data["types"],
         )
-        try:
-            if self.validateEmail(validated_data["email"]):
-                # Create the data model
-                data_type = self.save_type(validated_data=validated_data)
+        # try:
+        if self.validateEmail(validated_data["email"]):
+            # Create the data model
+            data_type = self.save_type(validated_data=validated_data)
 
-                # Save the user
-                user.save()
+            # Save the user
+            user.save()
 
-                if validated_data["types"] == ("Individual" or "Company"):
-                    # Create the necessary data model's user to link with the actual user
-                    member_user = MemberUsers.objects.create(users=user, member=data_type)
-                    member_user.save()
+            if validated_data["types"] == ("Individual" or "Company"):
+                # Create the necessary data model's user to link with the actual user
+                member_user = MemberUsers.objects.create(users=user, member=data_type)
+                member_user.save()
 
-                elif validated_data["types"] == "Partner":
-                    # Create the necessary data model's user to link with the actual user
-                    partner_user = PartnerUsers.objects.create(users=user, partner=data_type)
-                    partner_user.save()
+            elif validated_data["types"] == "Partner":
+                # Create the necessary data model's user to link with the actual user
+                partner_user = PartnerUsers.objects.create(users=user, partner=data_type)
+                partner_user.save()
 
-                # Create the registration token
-                token = models.ResetPasswordToken.objects.create(user=user)
-                token.save()
+            # Create the registration token
+            token = models.ResetPasswordToken.objects.create(user=user)
+            token.save()
 
-                # Send the confirmation email
-                self.send_confirmation_email(user=user, token=token.key)
+            # Send the confirmation email
+            self.send_confirmation_email(user=user, token=token.key)
 
-        except:
-            try:
-                user.delete()
-                models.ResetPasswordToken.objects.get(user=user).delete()
-            except:
-                pass
-
-            raise ValidationError({"email": [_("User already exists")]})
+        # except:
+        #     try:
+        #         user.delete()
+        #         models.ResetPasswordToken.objects.get(user=user).delete()
+        #     except:
+        #         pass
+        #
+        #     raise ValidationError({"email": [_("User already exists")]})
 
         return user
 
